@@ -8,11 +8,11 @@ public class Proyecto {
 	private String nombre;
 	private ArrayList<Trabajador> losTrabajadores;
 	
-	public Proyecto(String id, String nombre) {
+	public Proyecto(String id, String nombre, ArrayList<Trabajador> losTrabajadores) {
 		super();
 		this.id = id;
 		this.nombre = nombre;
-		this.losTrabajadores = new ArrayList<>();
+		this.losTrabajadores = losTrabajadores;
 	}
 
 	public String getId() {
@@ -37,7 +37,7 @@ public class Proyecto {
 
 	public void setLosTrabajadores(ArrayList<Trabajador> losTrabajadores) {
 
-		this.losTrabajadores = losTrabajadores; //hacer exepcion o validacion para no aceptar < 4 y > 5
+		this.losTrabajadores = losTrabajadores; 
 
 	}
 	
