@@ -93,9 +93,6 @@ public class Contrato {
 	public void setDiasContrato(int diasContrato) {
 		this.diasContrato = diasContrato;
 	}
-	
-	
-	
-	
+
 	
 }
