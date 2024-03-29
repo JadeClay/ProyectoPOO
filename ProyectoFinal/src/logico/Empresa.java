@@ -1,6 +1,5 @@
 package logico;
 
-
 import java.util.ArrayList;
 
 public class Empresa {
@@ -9,7 +8,10 @@ public class Empresa {
 	private ArrayList<Cliente> misclientes;
 	private ArrayList<Proyecto> losproyectos;
 	private ArrayList<Contrato> loscontratos;
-	
+	public static int idTrabajadores;
+	public static int idContratos;
+	public static int idProyectos;
+	public static int idClientes;
 	
 	public Empresa(ArrayList<Trabajador> mistabajadores, ArrayList<Cliente> misclientes,
 			ArrayList<Proyecto> losproyectos, ArrayList<Contrato> loscontratos) {
@@ -18,6 +20,10 @@ public class Empresa {
 		this.misclientes = misclientes;
 		this.losproyectos = losproyectos;
 		this.loscontratos = loscontratos;
+		this.idClientes = 1;
+		this.idContratos = 1;
+		this.idProyectos = 1;
+		this.idTrabajadores = 1;
 	}
 
 

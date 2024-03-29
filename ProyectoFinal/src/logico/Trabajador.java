@@ -1,5 +1,7 @@
 package logico;
 
+import java.util.ArrayList;
+
 public class Trabajador {
 	protected String id;
 	protected String identificacion;
@@ -9,7 +11,7 @@ public class Trabajador {
 	protected String sexo;
 	protected int edad;
 	protected float salario;
-	protected String evaluacion;
+	protected ArrayList<Integer> historialPuntuacion = new ArrayList<Integer>();
 	
 	public Trabajador(String id, String identificacion, String nombre, String apellidos, String direccion, String sexo, int edad, float salario) {
 		super();
@@ -21,13 +23,7 @@ public class Trabajador {
 		this.sexo = sexo;
 		this.edad = edad;
 		this.salario = salario;
-		this.evaluacion = "N/A";
-	}
-	public String getEvaluacion() {
-		return evaluacion;
-	}
-	public void setEvaluacion(String evaluacion) {
-		this.evaluacion = evaluacion;
+		this.historialPuntuacion.add(100);
 	}
 	public String getId() {
 		return id;
@@ -52,6 +48,35 @@ public class Trabajador {
 	}
 	public float getSalario() {
 		return salario;
+	}
+	public String getEvaluacionActual() {
+		String result = "";
+		int ultimaEvaluacion = historialPuntuacion.size()-1;
+		
+		if(historialPuntuacion.get(ultimaEvaluacion) > 90) {
+			result = "Destacado";
+		} else if(historialPuntuacion.get(ultimaEvaluacion) > 70) {
+			result = "Cumplidor";
+		} else {
+			result = "Incumplidor";
+		}
+		
+		return result;
+	}
+	public ArrayList<Integer> getHistorialPuntuacion() {
+		return historialPuntuacion;
+	}
+	public void actualizarHistorial(int cantHoras, boolean atraso) {
+		int puntosAModificar = cantHoras/100;
+		int indiceHistActual = historialPuntuacion.size()-1;
+		int historialActual = historialPuntuacion.get(indiceHistActual);
+		
+		// Si se actualiza el historial por un atraso
+		if(atraso) {
+			historialPuntuacion.add(historialActual - puntosAModificar);
+		} else if((historialActual + puntosAModificar) <= 100) { // Si se actualiza el historial por terminar el proyecto antes
+			historialPuntuacion.add(historialActual + puntosAModificar);
+		}
 	}
 
 }
