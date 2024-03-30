@@ -1,6 +1,8 @@
 package logico;
 
-public class Programador extends Trabajador {
+import java.io.Serializable;
+
+public class Programador extends Trabajador implements Serializable {
 	private String lenguaje;
 	
 	public Programador(String id, String identificacion, String nombre, String apellidos, String direccion, String sexo,

@@ -1,8 +1,9 @@
 package logico;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Trabajador {
+public class Trabajador implements Serializable {
 	protected String id;
 	protected String identificacion;
 	protected String nombre;

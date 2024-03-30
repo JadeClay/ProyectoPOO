@@ -9,6 +9,13 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
+import logico.Disenador;
+import logico.Empresa;
+import logico.JefeProyecto;
+import logico.Planificador;
+import logico.Programador;
+import logico.Trabajador;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -19,6 +26,11 @@ import java.awt.event.ActionEvent;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.UIManager;
 import java.awt.Color;
+import javax.swing.JList;
+import javax.swing.AbstractListModel;
+import javax.swing.ListSelectionModel;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
 
 public class RegistrarTrabajador extends JDialog {
 
@@ -38,8 +50,10 @@ public class RegistrarTrabajador extends JDialog {
 	private JTextField txtNombre;
 	private JTextField txtApellido;
 	private JTextField txtDireccion;
-	private JTextField txtSexo;
 	private JTextField txtIdentificacion;
+	private JComboBox cbxSexo;
+	private JSpinner spnSalario;
+	private JSpinner spnEdad;
 
 	/**
 	 * Launch the application.
@@ -119,16 +133,11 @@ public class RegistrarTrabajador extends JDialog {
 			lblSexo.setBounds(24, 155, 50, 14);
 			panel_1.add(lblSexo);
 			
-			txtSexo = new JTextField();
-			txtSexo.setColumns(10);
-			txtSexo.setBounds(104, 151, 100, 22);
-			panel_1.add(txtSexo);
-			
 			JLabel lblEdad = new JLabel("Edad:");
 			lblEdad.setBounds(231, 155, 33, 14);
 			panel_1.add(lblEdad);
 			
-			JSpinner spnEdad = new JSpinner();
+			spnEdad = new JSpinner();
 			spnEdad.setModel(new SpinnerNumberModel(18, 16, 100, 1));
 			spnEdad.setBounds(293, 151, 116, 22);
 			panel_1.add(spnEdad);
@@ -137,7 +146,7 @@ public class RegistrarTrabajador extends JDialog {
 			lblSalariopagoX.setBounds(24, 190, 133, 14);
 			panel_1.add(lblSalariopagoX);
 			
-			JSpinner spnSalario = new JSpinner();
+			spnSalario = new JSpinner();
 			spnSalario.setModel(new SpinnerNumberModel(new Float(150), null, null, new Float(1)));
 			spnSalario.setBounds(169, 186, 240, 22);
 			panel_1.add(spnSalario);
@@ -150,6 +159,11 @@ public class RegistrarTrabajador extends JDialog {
 			txtIdentificacion.setColumns(10);
 			txtIdentificacion.setBounds(104, 59, 305, 22);
 			panel_1.add(txtIdentificacion);
+			
+			cbxSexo = new JComboBox();
+			cbxSexo.setModel(new DefaultComboBoxModel(new String[] {"Seleccionar...", "Femenino", "Masculino", "No binario"}));
+			cbxSexo.setBounds(104, 151, 115, 22);
+			panel_1.add(cbxSexo);
 			
 			panel_2 = new JPanel();
 			panel_2.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Cargo:", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
@@ -274,23 +288,44 @@ public class RegistrarTrabajador extends JDialog {
 				JButton btnOk = new JButton("Contratar");
 				btnOk.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						//Queso queso = null;
+						Trabajador trabajador = null;
 						String id = txtId.getText();
-						if(rbtnJefeProyecto.isSelected()){
-							float radioEsfera = new Float(spnAnios.getValue().toString());
-							//queso = new Esfera(id,costoUnitario,precioBase, radioEsfera);
+						String identificacion = txtIdentificacion.getText();
+						String nombre = txtNombre.getText();
+						String apellido = txtApellido.getText();
+						String direccion = txtDireccion.getText();
+						String sexo = cbxSexo.getSelectedItem().toString();
+						int edad = (int) spnEdad.getValue();
+						float salario = (float) spnSalario.getValue();
+						boolean validado = false;
+						
+						if(rbtnPlanificador.isSelected()){
+							int cantDias = new Integer(spnFrecuencia.getValue().toString());
+							trabajador = new Planificador(id,identificacion,nombre,apellido,direccion,sexo,edad,salario,cantDias);
 						}
-						if(rbtnDisenador.isSelected()){ 
-							//queso = new Cilindro(id, costoUnitario, precioBase, radioCilindro, longitudCilindro);
+						else if(rbtnDisenador.isSelected()){ 
+							int aniosExperiencia = new Integer(spnAnios.getValue().toString());
+							trabajador = new Disenador(id,identificacion,nombre,apellido,direccion,sexo,edad,salario,aniosExperiencia);
 						}
-						if(rbtnProgramador.isSelected()){
-							float radioCilindroHExt = new Float(spnFrecuencia.getValue().toString());
-							//queso = new CilindroHueco(id, costoUnitario, precioBase, radioCilindroHExt, longitudCilindroH, radioCilindroHInt);
+						else if(rbtnProgramador.isSelected()){
+							String lenguaje = txtLenguaje.getText();
+							trabajador = new Programador(id,identificacion,nombre,apellido,direccion,sexo,edad,salario,lenguaje);
+							if(lenguaje.isEmpty()) {
+								validado = true;
+							}
+						} else {
+							trabajador = new JefeProyecto(id,identificacion,nombre,apellido,direccion,sexo,edad,salario);
 						}
 						
-						//Complejo.getInstance().insertarQueso(queso);
-						JOptionPane.showMessageDialog(null,"Registro Satisfactorio" ,"Información", JOptionPane.INFORMATION_MESSAGE);
-						clean();
+						if(validado || verificarCampos(id,identificacion,nombre,apellido,direccion,sexo,edad,salario)) {
+							Empresa.getInstance().registrarTrabajador(trabajador);
+							resetValues();
+							JOptionPane.showMessageDialog(null,"Registro Satisfactorio" ,"Información", JOptionPane.INFORMATION_MESSAGE);
+						}else {
+							JOptionPane.showMessageDialog(null,"Registro fallido" ,"Información", JOptionPane.ERROR_MESSAGE);
+						}
+						
+						
 					}
 
 			
@@ -302,23 +337,49 @@ public class RegistrarTrabajador extends JDialog {
 			{
 				JButton btnCerrar = new JButton("Cancelar");
 				btnCerrar.setActionCommand("Cancel");
+				btnCerrar.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						dispose();
+					}
+				});
 				buttonPane.add(btnCerrar);
 			}
 		}
+		resetValues();
 	}
 	
-	private void clean() {
+	private void resetValues() {
 		rbtnProgramador.setSelected(false);
 		rbtnDisenador.setSelected(true);
 		rbtnJefeProyecto.setSelected(false);
 		pnlDisenador.setVisible(true);
 		pnlProgramador.setVisible(false);
 		pnlPlanificador.setVisible(false);
+		txtLenguaje.setText("");
+		txtNombre.setText("");
+		txtApellido.setText("");
+		txtDireccion.setText("");
 		
-	//	txtId.setText("Q-"+Complejo.getInstance().idQueso);
+		txtIdentificacion.setText("");
 		
-		spnFrecuencia.setValue(new Float(0));
-		spnAnios.setValue(new Float(0));
+		txtId.setText("T-"+Empresa.getInstance().idTrabajadores);
 		
+		spnFrecuencia.setValue(new Integer(1));
+		spnEdad.setValue(new Integer(18));
+		spnAnios.setValue(new Integer(1));
+		spnSalario.setValue(new Float(150));
+		
+	}
+	
+	private boolean verificarCampos(String id, String identificacion, String nombre, String apellidos, String direccion, String sexo,
+			int edad, float salario) {
+		boolean result = false;
+		
+		if(!id.isEmpty() && !identificacion.isEmpty() && !nombre.isEmpty() && !apellidos.isEmpty() && !direccion.isEmpty() 
+				&& !sexo.isEmpty() && (edad != 0) && (salario != 0)) {
+			result = true;
+		}
+		
+		return result;
 	}
 }

@@ -7,6 +7,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+
+import logico.Empresa;
+
 import javax.swing.border.BevelBorder;
 import javax.swing.BoxLayout;
 import java.awt.CardLayout;
@@ -36,7 +39,15 @@ public class Principal extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					Empresa.getInstance().verificarDatos();
+					
 					Principal frame = new Principal();
+					/*frame.addWindowListener(new java.awt.event.WindowAdapter() {
+					    @Override
+					    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+					    	Empresa.getInstance().guardarDatos();
+					    }
+					});*/
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -70,12 +81,24 @@ public class Principal extends JFrame {
 		menuBar.add(mnTrabajadores);
 		
 		JMenuItem mntmContratar = new JMenuItem("Contratar");
+		mntmContratar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				RegistrarTrabajador ventana = new RegistrarTrabajador();
+				ventana.setVisible(true);
+			}
+		});
 		mnTrabajadores.add(mntmContratar);
 		
 		JSeparator separator = new JSeparator();
 		mnTrabajadores.add(separator);
 		
 		JMenuItem mntmListadoTrabajadores = new JMenuItem("Listado");
+		mntmListadoTrabajadores.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ListadoTrabajadores ventana = new ListadoTrabajadores();
+				ventana.setVisible(true);
+			}
+		});
 		mnTrabajadores.add(mntmListadoTrabajadores);
 		
 		JMenu mnClientes = new JMenu("Clientes");

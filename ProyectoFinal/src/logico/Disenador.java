@@ -1,6 +1,8 @@
 package logico;
 
-public class Disenador extends Trabajador {
+import java.io.Serializable;
+
+public class Disenador extends Trabajador implements Serializable {
 	private int aniosExp;
 
 	public Disenador(String id, String identificacion, String nombre, String apellidos, String direccion, String sexo,
