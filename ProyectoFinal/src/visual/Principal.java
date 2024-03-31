@@ -63,7 +63,8 @@ public class Principal extends JFrame {
 		setResizable(false);
 		setTitle("Gestion de Software Empresarial");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 742, 514);
+		setBounds(100, 100, 813, 630);
+		setLocationRelativeTo(null);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
@@ -74,7 +75,7 @@ public class Principal extends JFrame {
 		panel_1.setLayout(null);
 		
 		JMenuBar menuBar = new JMenuBar();
-		menuBar.setBounds(0, 0, 726, 26);
+		menuBar.setBounds(0, 0, 797, 26);
 		panel_1.add(menuBar);
 		
 		JMenu mnTrabajadores = new JMenu("Trabajadores");
@@ -126,13 +127,13 @@ public class Principal extends JFrame {
 		mnProyectos.add(mntmNewMenuItem);
 		
 		JPanel backgroundPanel = new JPanel();
-		backgroundPanel.setBounds(0, 23, 726, 446);
+		backgroundPanel.setBounds(0, 23, 797, 562);
 		panel_1.add(backgroundPanel);
 		backgroundPanel.setLayout(null);
 		
 		JLabel lblBackground = new JLabel("");
 		lblBackground.setIcon(new ImageIcon(Principal.class.getResource("/visual/img/background.jpg")));
-		lblBackground.setBounds(0, 0, 726, 446);
+		lblBackground.setBounds(0, 0, 797, 563);
 		backgroundPanel.add(lblBackground);
 	}
 }

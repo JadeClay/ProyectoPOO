@@ -160,21 +160,25 @@ public class Empresa {
 		ObjectOutputStream oos = new ObjectOutputStream(f);
 		oos.writeInt(0);
 		oos.close();
+		f.close();
 		
 		f = new FileOutputStream("contratos.dat");
 		oos = new ObjectOutputStream(f);
 		oos.writeInt(0);
 		oos.close();
+		f.close();
 		
 		f = new FileOutputStream("clientes.dat");
 		oos = new ObjectOutputStream(f);
 		oos.writeInt(0);
 		oos.close();
+		f.close();
 		
 		f = new FileOutputStream("proyectos.dat");
 		oos = new ObjectOutputStream(f);
 		oos.writeInt(0);
 		oos.close();
+		f.close();
 
 	}
 	
@@ -194,10 +198,11 @@ public class Empresa {
 	
 	private Runnable cargarTrabajadores() {
 		Runnable tarea = () -> {
-			FileInputStream file;
+			FileInputStream file = null;
+			ObjectInputStream ois = null;
 			try {
 				file = new FileInputStream("trabajadores.dat");
-				ObjectInputStream ois = new ObjectInputStream(file);
+				ois = new ObjectInputStream(file);
 				int size = ois.readInt();
 				
 				if(size > 0) {
@@ -207,10 +212,25 @@ public class Empresa {
 						mistrabajadores.add(t);
 					}
 				}
-				ois.close();
+				recuperarUltimoIdTrabajador();
 			} catch (IOException | ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} finally {
+				if (ois != null) {
+		            try {
+		                ois.close();
+		            } catch (IOException e) {
+		                e.printStackTrace();
+		            }
+		        }
+		        if (file != null) {
+		            try {
+		                file.close();
+		            } catch (IOException e) {
+		                e.printStackTrace();
+		            }
+		        }
 			}
 		};
 		
@@ -219,12 +239,12 @@ public class Empresa {
 	
 	private Runnable cargarContratos() {
 		Runnable tarea = () -> {
-			FileInputStream file;
+			FileInputStream file = null;
+			ObjectInputStream ois = null;
 			try {
 				file = new FileInputStream("contratos.dat");
-				ObjectInputStream ois = new ObjectInputStream(file);
+				ois = new ObjectInputStream(file);
 				int size = ois.readInt();
-				
 				
 				if(size > 0) {
 					for(int i = 0; i < size; i++) {
@@ -232,10 +252,25 @@ public class Empresa {
 						this.loscontratos.add(c);
 					}
 				}
-				ois.close();
+				recuperarUltimoIdContrato();
 			} catch (IOException | ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} finally {
+				if (ois != null) {
+		            try {
+		                ois.close();
+		            } catch (IOException e) {
+		                e.printStackTrace();
+		            }
+		        }
+		        if (file != null) {
+		            try {
+		                file.close();
+		            } catch (IOException e) {
+		                e.printStackTrace();
+		            }
+		        }
 			}
 		};
 		
@@ -244,10 +279,11 @@ public class Empresa {
 	
 	private Runnable cargarProyectos() {
 		Runnable tarea = () -> {
-			FileInputStream file;
+			FileInputStream file = null;
+			ObjectInputStream ois = null;
 			try {
 				file = new FileInputStream("proyectos.dat");
-				ObjectInputStream ois = new ObjectInputStream(file);
+				ois = new ObjectInputStream(file);
 				int size = ois.readInt();
 				
 				if(size > 0) {
@@ -256,10 +292,25 @@ public class Empresa {
 						this.losproyectos.add(p);
 					}
 				}
-				ois.close();
+				recuperarUltimoIdProyecto();
 			} catch (IOException | ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} finally {
+				if (ois != null) {
+		            try {
+		                ois.close();
+		            } catch (IOException e) {
+		                e.printStackTrace();
+		            }
+		        }
+		        if (file != null) {
+		            try {
+		                file.close();
+		            } catch (IOException e) {
+		                e.printStackTrace();
+		            }
+		        }
 			}
 		};
 		
@@ -268,10 +319,11 @@ public class Empresa {
 	
 	private Runnable cargarClientes() {
 		Runnable tarea = () -> {
-			FileInputStream file;
+			FileInputStream file = null;
+			ObjectInputStream ois = null;
 			try {
 				file = new FileInputStream("clientes.dat");
-				ObjectInputStream ois = new ObjectInputStream(file);
+				ois = new ObjectInputStream(file);
 				int size = ois.readInt();
 
 				if(size > 0) {
@@ -280,97 +332,219 @@ public class Empresa {
 						this.misclientes.add(c);
 					}
 				}
-				ois.close();
+				recuperarUltimoIdCliente();
 			} catch (IOException | ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} finally {
+				if (ois != null) {
+		            try {
+		                ois.close();
+		            } catch (IOException e) {
+		                e.printStackTrace();
+		            }
+		        }
+		        if (file != null) {
+		            try {
+		                file.close();
+		            } catch (IOException e) {
+		                e.printStackTrace();
+		            }
+		        }
 			}
 		};
 		
 		return tarea;
 	}
 	
-	private Runnable guardarTrabajadores() {
+	public Runnable guardarTrabajadores() {
 		Runnable tarea = () -> {
+			FileOutputStream file = null;
+			ObjectOutputStream oos = null;
 			try {
-				FileOutputStream file = new FileOutputStream("trabajadores.dat", false);
-				ObjectOutputStream oos = new ObjectOutputStream(file);
+				file = new FileOutputStream("trabajadores.dat", false);
+				oos = new ObjectOutputStream(file);
 				
 				oos.writeInt(mistrabajadores.size());
 				for(Trabajador trabajador : mistrabajadores) {
 					oos.writeObject(trabajador);
 				}
-				oos.close();
-				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} finally {
+				if (oos != null) {
+		            try {
+		                oos.close();
+		            } catch (IOException e) {
+		                e.printStackTrace();
+		            }
+		        }
+		        if (file != null) {
+		            try {
+		                file.close();
+		            } catch (IOException e) {
+		                e.printStackTrace();
+		            }
+		        }
 			}
 		};
 		
 		return tarea;
 	}
 	
-	private Runnable guardarProyectos() {
+	public Runnable guardarProyectos() {
 		Runnable tarea = () -> {
+			FileOutputStream file = null;
+			ObjectOutputStream oos = null;
 			try {
-				FileOutputStream file = new FileOutputStream("proyectos.dat", false);
-				ObjectOutputStream oos = new ObjectOutputStream(file);
+				file = new FileOutputStream("proyectos.dat", false);
+				oos = new ObjectOutputStream(file);
 				
 				oos.writeInt(losproyectos.size());
 				for(Proyecto proyecto : losproyectos) {
 					oos.writeObject(proyecto);
 				}
-				oos.close();
-				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} finally {
+				if (oos != null) {
+		            try {
+		                oos.close();
+		            } catch (IOException e) {
+		                e.printStackTrace();
+		            }
+		        }
+		        if (file != null) {
+		            try {
+		                file.close();
+		            } catch (IOException e) {
+		                e.printStackTrace();
+		            }
+		        }
 			}
+
 		};
 		
 		return tarea;
 	}
 	
-	private Runnable guardarClientes() {
+	public Runnable guardarClientes() {
 		Runnable tarea = () -> {
+			FileOutputStream file = null;
+			ObjectOutputStream oos = null;
 			try {
-				FileOutputStream file = new FileOutputStream("clientes.dat", false);
-				ObjectOutputStream oos = new ObjectOutputStream(file);
+				file = new FileOutputStream("clientes.dat", false);
+				oos = new ObjectOutputStream(file);
 				
 				oos.writeInt(misclientes.size());
 				for(Cliente cliente : misclientes) {
 					oos.writeObject(cliente);
 				}
-				oos.close();
-				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} finally {
+				if (oos != null) {
+		            try {
+		                oos.close();
+		            } catch (IOException e) {
+		                e.printStackTrace();
+		            }
+		        }
+		        if (file != null) {
+		            try {
+		                file.close();
+		            } catch (IOException e) {
+		                e.printStackTrace();
+		            }
+		        }
 			}
+
 		};
 		
 		return tarea;
 	}
 	
-	private Runnable guardarContratos() {
+	public Runnable guardarContratos() {
 		Runnable tarea = () -> {
+			FileOutputStream file = null;
+			ObjectOutputStream oos = null;
 			try {
-				FileOutputStream file = new FileOutputStream("contratos.dat", false);
-				ObjectOutputStream oos = new ObjectOutputStream(file);
+				file = new FileOutputStream("contratos.dat", false);
+				oos = new ObjectOutputStream(file);
 				
 				oos.writeInt(loscontratos.size());
 				for(Contrato contrato : loscontratos) {
 					oos.writeObject(contrato);
 				}
-				oos.close();
-				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} finally {
+				if (oos != null) {
+		            try {
+		                oos.close();
+		            } catch (IOException e) {
+		                e.printStackTrace();
+		            }
+		        }
+		        if (file != null) {
+		            try {
+		                file.close();
+		            } catch (IOException e) {
+		                e.printStackTrace();
+		            }
+		        }
 			}
+
 		};
 		
 		return tarea;
+	}
+	
+	private void recuperarUltimoIdTrabajador() {
+		Trabajador aux = null;
+		aux = mistrabajadores.get(mistrabajadores.size()-1);
+		
+		idTrabajadores = new Integer(aux.getId().substring(2)) + 1;
+	}
+	
+	private void recuperarUltimoIdCliente() {
+		Cliente aux = null;
+		aux = misclientes.get(misclientes.size()-1);
+		
+		idClientes = new Integer(aux.getId().substring(2)) + 1;
+	}
+	
+	private void recuperarUltimoIdContrato() {
+		Contrato aux = null;
+		aux = loscontratos.get(loscontratos.size()-1);
+		
+		idContratos = new Integer(aux.getId().substring(2)) + 1;
+	}
+	
+	private void recuperarUltimoIdProyecto() {
+		Proyecto aux = null;
+		aux = losproyectos.get(losproyectos.size() - 1);
+		
+		idProyectos = new Integer(aux.getId().substring(2)) + 1;
+	}
+
+	public Trabajador buscarTrabajadorById(String id) {
+		Trabajador result = null;
+		boolean encontrado = false;
+		int i=0;
+		
+		while(!encontrado && i<mistrabajadores.size()) {
+			if(mistrabajadores.get(i).getId().equalsIgnoreCase(id)) {
+				result = mistrabajadores.get(i);
+				encontrado = true;
+			}
+			i++;
+		}
+		
+		return result;
 	}
 }

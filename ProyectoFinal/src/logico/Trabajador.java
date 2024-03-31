@@ -78,6 +78,9 @@ public class Trabajador implements Serializable {
 		} else if((historialActual + puntosAModificar) <= 100) { // Si se actualiza el historial por terminar el proyecto antes
 			historialPuntuacion.add(historialActual + puntosAModificar);
 		}
+		
+		Thread hilo = new Thread(Empresa.getInstance().guardarTrabajadores());
+		hilo.start();
 	}
 
 }

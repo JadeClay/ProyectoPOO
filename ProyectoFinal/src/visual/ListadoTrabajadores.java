@@ -24,7 +24,6 @@ import logico.Empresa;
 public class ListadoTrabajadores extends JDialog {
 	
 	private final JPanel contentPanel = new JPanel();
-	private JButton btnUpdate;
 	private JButton btnCancel;
 	private JTable table;
 	private JButton btnDelete;
@@ -52,7 +51,7 @@ public class ListadoTrabajadores extends JDialog {
 		setResizable(false);
 		setTitle("Listado de Trabajadores");
 		setModal(true);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 738, 530);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -68,7 +67,7 @@ public class ListadoTrabajadores extends JDialog {
 				scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 				panel.add(scrollPane, BorderLayout.CENTER);
 				{
-					String[] headers = {"Código","Identificacion","Nombres","Apellidos","Direccion","Edad","Evaluación"};
+					String[] headers = {"Código","Identificacion","Nombres","Apellidos","Direccion","Edad","Salario/hora","Evaluación"};
 					model = new DefaultTableModel();
 					model.setColumnIdentifiers(headers);
 					table = new JTable();
@@ -78,8 +77,8 @@ public class ListadoTrabajadores extends JDialog {
 							int index = table.getSelectedRow();
 							if(index > -1){
 								btnDelete.setEnabled(true);
-								btnUpdate.setEnabled(true);
-								//selected = Empresa.getInstance().buscarClienteById(table.getValueAt(index, 0).toString());
+								selected = Empresa.getInstance().buscarTrabajadorById(table.getValueAt(index, 0).toString());
+								System.out.print(selected.getId());
 							}
 						}
 					});
@@ -98,9 +97,9 @@ public class ListadoTrabajadores extends JDialog {
 				btnDelete.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						if(selected != null){
-							int option = JOptionPane.showConfirmDialog(null, "Seguro desea elminiar el cliente con codigo: "+ selected.getId(), "Eliminar", JOptionPane.WARNING_MESSAGE);
+							int option = JOptionPane.showConfirmDialog(null, "Seguro desea eliminar el trabajador con código: "+ selected.getId(), "Eliminar", JOptionPane.WARNING_MESSAGE);
 							if(option == JOptionPane.YES_OPTION){
-								// Empresa.getInstance().eliminarCliente(selected.getId());
+								Empresa.getInstance().eliminarTrabajador(selected);
 								loadClientes();
 							}
 						}
@@ -135,7 +134,8 @@ public class ListadoTrabajadores extends JDialog {
 			rows[3] = Empresa.getInstance().getMistabajadores().get(i).getApellidos();
 			rows[4] = Empresa.getInstance().getMistabajadores().get(i).getDireccion();
 			rows[5] = Empresa.getInstance().getMistabajadores().get(i).getEdad();
-			rows[6] = Empresa.getInstance().getMistabajadores().get(i).getEvaluacionActual();
+			rows[6] = new String("RD$ " + Empresa.getInstance().getMistabajadores().get(i).getSalario());
+			rows[7] = Empresa.getInstance().getMistabajadores().get(i).getEvaluacionActual();
 			model.addRow(rows);
 		}
 		
