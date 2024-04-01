@@ -125,7 +125,97 @@ public class Empresa {
 		hilo.start();
 	}
 	
+	public void modificarProyecto(String idProyecto, Proyecto nuevoProyecto) {
+	    for (Proyecto proyecto : losproyectos) {
+	        if (proyecto.getId().equals(idProyecto)) {
+	            
+	            proyecto.setNombre(nuevoProyecto.getNombre());
+	            proyecto.setLosTrabajadores(nuevoProyecto.getLosTrabajadores());
+	            Thread hilo = new Thread(guardarProyectos());
+	            hilo.start();
+	            return; 
+	        }
+	    }
+	}
 	
+	
+	public void asignarTrabajadorAProyecto(String idProyecto, Trabajador trabajador) {
+		if (losproyectos != null) {
+		    for (Proyecto proyecto : losproyectos) {
+		        if (proyecto.getId().equals(idProyecto)) {
+		            // Verificar el tipo de trabajador y aplicar las restricciones
+		            if (trabajador instanceof JefeProyecto && proyecto.getCantidadJefesProyecto() == 0) {
+		                proyecto.getLosTrabajadores().add(trabajador);
+		                proyecto.incrementarCantidadJefesProyecto();
+		            } else if (trabajador instanceof Disenador && proyecto.getCantidadDisenadores() == 0) {
+		                proyecto.getLosTrabajadores().add(trabajador);
+		                proyecto.incrementarCantidadDisenadores();
+		            } else if (trabajador instanceof Programador && proyecto.getCantidadProgramadores() < 3) {
+		                proyecto.getLosTrabajadores().add(trabajador);
+		                proyecto.incrementarCantidadProgramadores();
+		            } else if (trabajador instanceof Planificador) {
+		                proyecto.getLosTrabajadores().add(trabajador);
+		            } else {
+		                System.out.println("No se puede agregar más trabajadores de este tipo al proyecto.");
+		                return;
+		            }
+		            Thread hilo = new Thread(guardarProyectos());
+		            hilo.start();
+		            return;
+		        }
+		    }
+		}
+		else {
+	        System.out.println("No hay proyectos disponibles para asignar trabajadores.");
+	    }
+	}
+
+	public void desasignarTrabajadorDeProyecto(String idProyecto, Trabajador trabajador) {
+	    for (Proyecto proyecto : losproyectos) {
+	        if (proyecto.getId().equals(idProyecto)) {
+	            proyecto.getLosTrabajadores().remove(trabajador);
+	            if (trabajador instanceof JefeProyecto) {
+	                proyecto.decrementarCantidadJefesProyecto();
+	            } else if (trabajador instanceof Disenador) {
+	                proyecto.decrementarCantidadDisenadores();
+	            } else if (trabajador instanceof Programador) {
+	                proyecto.decrementarCantidadProgramadores();
+	            }
+	            Thread hilo = new Thread(guardarProyectos());
+	            hilo.start();
+	            return;
+	        }
+	    }
+	}
+
+	public void asignarClienteAProyecto(String idProyecto, Cliente cliente) {
+	    for (Proyecto proyecto : losproyectos) {
+	        if (proyecto.getId().equals(idProyecto)) {
+	            if (proyecto.getLosClientes().size() < 5) {
+	                proyecto.getLosClientes().add(cliente);
+	                Thread hilo = new Thread(guardarProyectos());
+	                hilo.start();
+	                return;
+	            } else {
+	                System.out.println("El proyecto ya tiene el máximo de clientes.");
+	                return;
+	            }
+	        }
+	    }
+	}
+
+	public void desasignarClienteDeProyecto(String idProyecto, Cliente cliente) {
+	    for (Proyecto proyecto : losproyectos) {
+	        if (proyecto.getId().equals(idProyecto)) {
+	            proyecto.getLosClientes().remove(cliente);
+	            Thread hilo = new Thread(guardarProyectos());
+	            hilo.start();
+	            return;
+	        }
+	    }
+	}
+
+
 	
 	// Manejo de Ficheros y Persistencia de Datos
 	public void verificarDatos() {

@@ -11,6 +11,8 @@ public class Programador extends Trabajador implements Serializable {
 		this.lenguaje = lenguaje;
 	}
 
+	
+
 	public String getLenguaje() {
 		return lenguaje;
 	}
