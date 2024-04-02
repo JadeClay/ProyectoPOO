@@ -68,7 +68,14 @@ public class ListadoTrabajadores extends JDialog {
 				panel.add(scrollPane, BorderLayout.CENTER);
 				{
 					String[] headers = {"Código","Identificacion","Nombres","Apellidos","Direccion","Edad","Salario/hora","Evaluación"};
-					model = new DefaultTableModel();
+					model = new DefaultTableModel(){
+
+					    @Override
+					    public boolean isCellEditable(int row, int column) {
+					       //all cells false
+					       return false;
+					    }
+					};
 					model.setColumnIdentifiers(headers);
 					table = new JTable();
 					table.addMouseListener(new MouseAdapter() {
@@ -83,6 +90,7 @@ public class ListadoTrabajadores extends JDialog {
 						}
 					});
 					table.setModel(model);
+					
 					scrollPane.setViewportView(table);
 				}
 			}

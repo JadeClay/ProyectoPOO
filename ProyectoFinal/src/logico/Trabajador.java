@@ -79,8 +79,6 @@ public class Trabajador implements Serializable {
 			historialPuntuacion.add(historialActual + puntosAModificar);
 		}
 		
-		Thread hilo = new Thread(Empresa.getInstance().guardarTrabajadores());
-		hilo.start();
 	}
 
 }

@@ -20,6 +20,12 @@ import java.awt.Component;
 import javax.swing.Box;
 import javax.swing.JLabel;
 import java.awt.event.ActionListener;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.awt.event.ActionEvent;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
@@ -38,16 +44,55 @@ public class Principal extends JFrame {
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
+				FileInputStream empresa;
+				FileOutputStream empresa2;
+				ObjectInputStream empresaRead;
+				ObjectOutputStream empresaWrite;
 				try {
-					Empresa.getInstance().verificarDatos();
+					empresa = new FileInputStream ("empresa.dat");
+					empresaRead = new ObjectInputStream(empresa);
+					Empresa temp = (Empresa)empresaRead.readObject();
+					Empresa.setEmpresa(temp);
+					empresa.close();
+					empresaRead.close();
+				} catch (FileNotFoundException e) {
+					try {
+						empresa2 = new  FileOutputStream("empresa.dat");
+						empresaWrite = new ObjectOutputStream(empresa2);
+						//User aux = new User("Administrador", "Admin", "Admin");
+						//Empresa.getInstance().regUser(aux);
+						empresaWrite.writeObject(Empresa.getInstance());
+						empresa2.close();
+						empresaWrite.close();
+					} catch (FileNotFoundException e1) {
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+					}
+				} catch (IOException | ClassNotFoundException e) {
+					e.printStackTrace();
 					
+				} 
+				
+				try {
 					Principal frame = new Principal();
-					/*frame.addWindowListener(new java.awt.event.WindowAdapter() {
+					frame.addWindowListener(new java.awt.event.WindowAdapter() {
 					    @Override
 					    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-					    	Empresa.getInstance().guardarDatos();
+							FileOutputStream empresa2;
+							ObjectOutputStream empresaWrite;
+							try {
+								empresa2 = new  FileOutputStream("empresa.dat");
+								empresaWrite = new ObjectOutputStream(empresa2);
+								empresaWrite.writeObject(Empresa.getInstance());
+							} catch (FileNotFoundException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
 					    }
-					});*/
+					});
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
