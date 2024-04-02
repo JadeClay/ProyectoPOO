@@ -27,10 +27,10 @@ public class Empresa {
 		this.misclientes = new ArrayList<Cliente>();
 		this.losproyectos = new ArrayList<Proyecto>();
 		this.loscontratos = new ArrayList<Contrato>();
-		this.idClientes = 1;
-		this.idContratos = 1;
-		this.idProyectos = 1;
-		this.idTrabajadores = 1;
+		idClientes = 1;
+		idContratos = 1;
+		idProyectos = 1;
+		idTrabajadores = 1;
 	}
 
 	public static Empresa getInstance(){
@@ -80,7 +80,7 @@ public class Empresa {
 	}
 	
 	public void registrarTrabajador(Trabajador trabajador) {
-		this.idTrabajadores++;
+		idTrabajadores++;
 		mistrabajadores.add(trabajador);
 		Thread hilo = new Thread(guardarTrabajadores());
 		hilo.start();
@@ -93,7 +93,7 @@ public class Empresa {
 	}
 	
 	public void registrarContrato(Contrato contrato) {
-		this.idContratos++;
+		idContratos++;
 		loscontratos.add(contrato);
 		Thread hilo = new Thread(guardarContratos());
 		hilo.start();
@@ -106,7 +106,7 @@ public class Empresa {
 	}
 	
 	public void registrarCliente(Cliente cliente) {
-		this.idClientes++;
+		idClientes++;
 		misclientes.add(cliente);
 		Thread hilo = new Thread(guardarClientes());
 		hilo.start();
@@ -119,7 +119,7 @@ public class Empresa {
 	}
 	
 	public void registarProyecto(Proyecto proyecto) {
-		this.idProyectos++;
+		idProyectos++;
 		losproyectos.add(proyecto);
 		Thread hilo = new Thread(guardarProyectos());
 		hilo.start();
