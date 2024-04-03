@@ -16,6 +16,7 @@ public class Cliente implements Serializable {
 		this.nombre = nombre;
 		this.direccion = direccion;
 		this.losProyectos = losProyectos;
+		
 	}
 
 	public String getId() {

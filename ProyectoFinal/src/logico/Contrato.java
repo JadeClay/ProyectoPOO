@@ -27,6 +27,7 @@ public class Contrato implements Serializable {
 		fechaEntrega.setTime(calendario.getTimeInMillis());
 		this.prorrogado = false;
 		this.diasContrato = diasContrato;
+		
 	}
 
 
