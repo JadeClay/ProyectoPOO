@@ -1,6 +1,7 @@
 package logico;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
 
 public class Contrato implements Serializable {
@@ -14,13 +15,16 @@ public class Contrato implements Serializable {
 	private int diasContrato;
 	
 	
-	public Contrato(String id, Cliente cliente, Proyecto proyecto, Date fechaInicio, Date fechaEntrega, int diasContrato) {
+	public Contrato(String id, Cliente cliente, Proyecto proyecto, int diasContrato) {
 		super();
 		this.id = id;
 		this.cliente = cliente;
 		this.proyecto = proyecto;
-		this.fechaInicio = fechaInicio;
-		this.fechaEntrega = fechaEntrega;
+		this.fechaInicio = new Date();
+		Calendar calendario = Calendar.getInstance();
+		calendario.add(Calendar.DAY_OF_MONTH, diasContrato);	
+		this.fechaEntrega = new Date();
+		fechaEntrega.setTime(calendario.getTimeInMillis());
 		this.prorrogado = false;
 		this.diasContrato = diasContrato;
 	}
