@@ -81,4 +81,18 @@ public class Trabajador implements Serializable {
 		
 	}
 
+	public String getPosiDeTrabajador(Trabajador t) { 
+
+		if (t instanceof Programador) {
+			return "Programador ";
+		}else if (t instanceof Planificador) {
+			return "Planificador";
+		}else if (t instanceof JefeProyecto) {
+			return "JefeProyecto";
+		}else if (t instanceof Disenador) {
+			return "Diseñador   ";
+		}
+		return null;
+	}
+	
 }
