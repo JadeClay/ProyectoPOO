@@ -163,18 +163,24 @@ public class Principal extends JFrame {
 		menuBar.add(mnProyectos);
 		
 		JMenuItem mntmCrear = new JMenuItem("Registrar");
-		mnProyectos.add(mntmCrear);
-		mnProyectos.addActionListener(new ActionListener() {
+		mntmCrear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				RegProyecto ventana = new RegProyecto();
 				ventana.setVisible(true);
 			}
 		});
+		mnProyectos.add(mntmCrear);
 		
 		JSeparator separator_2 = new JSeparator();
 		mnProyectos.add(separator_2);
 		
 		JMenuItem mntmNewMenuItem = new JMenuItem("Listado");
+		mntmNewMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ListadoProyecto ventana = new ListadoProyecto();
+				ventana.setVisible(true);
+			}
+		});
 		mnProyectos.add(mntmNewMenuItem);
 		
 		JPanel backgroundPanel = new JPanel();
