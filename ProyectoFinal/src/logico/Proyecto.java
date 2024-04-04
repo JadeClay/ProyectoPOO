@@ -8,7 +8,6 @@ public class Proyecto implements Serializable {
 	private String id;
 	private String nombre;
 	private ArrayList<Trabajador> losTrabajadores;
-	private ArrayList<Cliente> losClientes;
 	private int cantidadJefesProyecto;
 	private int cantidadDisenadores;
 	private int cantidadProgramadores;
@@ -18,7 +17,6 @@ public class Proyecto implements Serializable {
 	    this.id = id;
 	    this.nombre = nombre;
 	    this.losTrabajadores = new ArrayList<>();
-	    this.losClientes = new ArrayList<>();
 	    this.cantidadJefesProyecto = 0;
 	    this.cantidadDisenadores = 0;
 	    this.cantidadProgramadores = 0;
@@ -47,14 +45,6 @@ public class Proyecto implements Serializable {
 
 	public void setLosTrabajadores(ArrayList<Trabajador> losTrabajadores) {
 		this.losTrabajadores = losTrabajadores; 
-	}
-
-	public ArrayList<Cliente> getLosClientes() {
-		return losClientes;
-	}
-
-	public void setLosClientes(ArrayList<Cliente> losClientes) {
-		this.losClientes = losClientes;
 	}
 
 	public int getCantidadJefesProyecto() {
@@ -104,4 +94,36 @@ public class Proyecto implements Serializable {
     public void decrementarCantidadJefesProyecto() {
         cantidadJefesProyecto--;
     }
+    
+    public void asignarTrabajadorAProyecto(Trabajador trabajador) {
+        if (trabajador instanceof JefeProyecto && this.cantidadJefesProyecto == 0) {
+            this.losTrabajadores.add(trabajador);
+            this.incrementarCantidadJefesProyecto();
+        } else if (trabajador instanceof Disenador && this.cantidadDisenadores == 0) {
+            this.losTrabajadores.add(trabajador);
+            this.incrementarCantidadDisenadores();
+        } else if (trabajador instanceof Programador && this.cantidadProgramadores < 3) {
+            this.losTrabajadores.add(trabajador);
+            this.incrementarCantidadProgramadores();
+        } else if (trabajador instanceof Planificador) {
+            this.losTrabajadores.add(trabajador);
+        } else {
+            System.out.println("No se puede agregar más trabajadores de este tipo al proyecto.");
+            return;
+        }
+    }
+
+    public void desasignarTrabajadorDeProyecto(Trabajador trabajador) {
+        this.losTrabajadores.remove(trabajador);
+        if (trabajador instanceof JefeProyecto) {
+            this.decrementarCantidadJefesProyecto();
+        } else if (trabajador instanceof Disenador) {
+            this.decrementarCantidadDisenadores();
+        } else if (trabajador instanceof Programador) {
+            this.decrementarCantidadProgramadores();
+        }
+    }
+
+
+    
 }
