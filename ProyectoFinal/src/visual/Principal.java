@@ -6,18 +6,9 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
 
 import logico.Empresa;
 
-import javax.swing.border.BevelBorder;
-import javax.swing.BoxLayout;
-import java.awt.CardLayout;
-import java.awt.GridLayout;
-import java.awt.FlowLayout;
-import javax.swing.JButton;
-import java.awt.Component;
-import javax.swing.Box;
 import javax.swing.JLabel;
 import java.awt.event.ActionListener;
 import java.io.FileInputStream;
@@ -30,13 +21,13 @@ import java.awt.event.ActionEvent;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.ImageIcon;
-import javax.swing.JEditorPane;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 
 public class Principal extends JFrame {
 
 	private JPanel contentPane;
+	private JMenuItem mntmRegistrar;
 
 	/**
 	 * Launch the application.
@@ -150,7 +141,14 @@ public class Principal extends JFrame {
 		JMenu mnClientes = new JMenu("Clientes");
 		menuBar.add(mnClientes);
 		
-		JMenuItem mntmRegistrar = new JMenuItem("Registrar");
+		mntmRegistrar = new JMenuItem("Registrar");
+		mntmRegistrar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				RegistrarCliente regCli = new RegistrarCliente();
+				regCli.setVisible(true);
+	
+			}
+		});
 		mnClientes.add(mntmRegistrar);
 		
 		JSeparator separator_1 = new JSeparator();
@@ -170,6 +168,24 @@ public class Principal extends JFrame {
 		
 		JMenuItem mntmNewMenuItem = new JMenuItem("Listado");
 		mnProyectos.add(mntmNewMenuItem);
+		
+		JMenu mnContratos = new JMenu("Contratos");
+		menuBar.add(mnContratos);
+		
+		JMenuItem mntmRegContrato = new JMenuItem("Registrar");
+		mntmRegContrato.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				RegistrarContrato regCont = new RegistrarContrato();
+				regCont.setVisible(true);
+			}
+		});
+		mnContratos.add(mntmRegContrato);
+		
+		JSeparator separator_3 = new JSeparator();
+		mnContratos.add(separator_3);
+		
+		JMenuItem mntmListContrato = new JMenuItem("Listado");
+		mnContratos.add(mntmListContrato);
 		
 		JPanel backgroundPanel = new JPanel();
 		backgroundPanel.setBounds(0, 23, 797, 562);

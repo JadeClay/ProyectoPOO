@@ -1,12 +1,6 @@
 package logico;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -261,5 +255,38 @@ public class Empresa implements Serializable {
 		return result;
 	}
 
+	public Proyecto getProyectoById(String id) {
+		
+		for (Proyecto p : losproyectos) {
+			if (p.getId().equalsIgnoreCase(id)) {
+				return p;
+			}
+		}
+		return null;
+	}
+	
+	public Cliente getClienteById(String id) {
+		
+		for (Cliente c : misclientes) {
+			if (c.getId().equalsIgnoreCase(id)) {
+				return c;
+			}
+		}
+		return null;
+	}
+
+	public String getPosiDeTrabajador(Trabajador t) { 
+
+		if (t instanceof Programador) {
+			return "Programador ";
+		}else if (t instanceof Planificador) {
+			return "Planificador";
+		}else if (t instanceof JefeProyecto) {
+			return "JefeProyecto";
+		}else if (t instanceof Disenador) {
+			return "Diseñador   ";
+		}
+		return null;
+	}
 
 }
