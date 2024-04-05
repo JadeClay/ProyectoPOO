@@ -10,12 +10,12 @@ public class Cliente implements Serializable {
 	private String direccion;
 	private ArrayList<Proyecto> losProyectos;
 	
-	public Cliente(String id, String nombre, String direccion, ArrayList<Proyecto> losProyectos) {
+	public Cliente(String id, String nombre, String direccion) {
 		super();
 		this.id = id;
 		this.nombre = nombre;
 		this.direccion = direccion;
-		this.losProyectos = losProyectos;
+		this.losProyectos = new ArrayList<>();
 		
 	}
 
