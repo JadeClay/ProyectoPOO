@@ -12,21 +12,21 @@ public class Contrato implements Serializable {
 	private Date fechaInicio;
 	private Date fechaEntrega;
 	private boolean prorrogado;
-	private int diasContrato;
+	private int horas;
 	
 	
-	public Contrato(String id, Cliente cliente, Proyecto proyecto, int diasContrato) {
+	public Contrato(String id, Cliente cliente, Proyecto proyecto, int horas) {
 		super();
 		this.id = id;
 		this.cliente = cliente;
 		this.proyecto = proyecto;
 		this.fechaInicio = new Date();
 		Calendar calendario = Calendar.getInstance();
-		calendario.add(Calendar.DAY_OF_MONTH, diasContrato);	
+		calendario.add(Calendar.HOUR_OF_DAY, horas);	
 		this.fechaEntrega = new Date();
 		fechaEntrega.setTime(calendario.getTimeInMillis());
 		this.prorrogado = false;
-		this.diasContrato = diasContrato;
+		this.horas = horas;
 		
 	}
 
@@ -91,13 +91,13 @@ public class Contrato implements Serializable {
 	}
 
 
-	public int getDiasContrato() {
-		return diasContrato;
+	public int getHoras() {
+		return horas;
 	}
 
 
-	public void setDiasContrato(int diasContrato) {
-		this.diasContrato = diasContrato;
+	public void setDiasContrato(int horas) {
+		this.horas = horas;
 	}
 
 	

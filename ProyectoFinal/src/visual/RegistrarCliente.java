@@ -35,6 +35,7 @@ public class RegistrarCliente extends JDialog {
 	private JTextField txtDireccion;
 	private JButton okButton;
 	private JButton cancelButton;
+	private JTextField txtIdentificacion;
 
 	/**
 	 * Launch the application.
@@ -53,10 +54,10 @@ public class RegistrarCliente extends JDialog {
 	 * Create the dialog.
 	 */
 	public RegistrarCliente() {
-		setTitle("Registro De Cliente");
+		setTitle("Registrar cliente");
 		setModal(true);
 		setResizable(false);
-		setBounds(100, 100, 569, 236);
+		setBounds(100, 100, 451, 289);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -70,7 +71,7 @@ public class RegistrarCliente extends JDialog {
 			
 			JPanel panel_1 = new JPanel();
 			panel_1.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Datos", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-			panel_1.setBounds(10, 11, 524, 128);
+			panel_1.setBounds(10, 11, 404, 172);
 			panel.add(panel_1);
 			panel_1.setLayout(null);
 			
@@ -79,11 +80,11 @@ public class RegistrarCliente extends JDialog {
 			panel_1.add(lblId);
 			
 			JLabel lblNombre = new JLabel("Nombre:");
-			lblNombre.setBounds(10, 55, 71, 14);
+			lblNombre.setBounds(10, 87, 71, 14);
 			panel_1.add(lblNombre);
 			
 			JLabel lblDireccion = new JLabel("Direccion:");
-			lblDireccion.setBounds(10, 83, 71, 14);
+			lblDireccion.setBounds(10, 115, 71, 14);
 			panel_1.add(lblDireccion);
 			
 			txtId = new JTextField();
@@ -94,14 +95,23 @@ public class RegistrarCliente extends JDialog {
 			txtId.setColumns(10);
 			
 			txtNombre = new JTextField();
-			txtNombre.setBounds(73, 52, 318, 20);
+			txtNombre.setBounds(107, 84, 284, 20);
 			panel_1.add(txtNombre);
 			txtNombre.setColumns(10);
 			
 			txtDireccion = new JTextField();
-			txtDireccion.setBounds(73, 83, 441, 20);
+			txtDireccion.setBounds(107, 115, 284, 20);
 			panel_1.add(txtDireccion);
 			txtDireccion.setColumns(10);
+			
+			txtIdentificacion = new JTextField();
+			txtIdentificacion.setColumns(10);
+			txtIdentificacion.setBounds(107, 54, 284, 20);
+			panel_1.add(txtIdentificacion);
+			
+			JLabel lblIdentificacion = new JLabel("Identificacion:");
+			lblIdentificacion.setBounds(10, 57, 85, 14);
+			panel_1.add(lblIdentificacion);
 		}
 		{
 			JPanel buttonPane = new JPanel();
@@ -112,13 +122,7 @@ public class RegistrarCliente extends JDialog {
 				okButton = new JButton("Registrar");
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						
-						//validaciones anti boom
-					Cliente client = new Cliente(txtId.getText(), txtNombre.getText(), txtDireccion.getText());
-					Empresa.getInstance().getMisclientes().add(client);
-					Empresa.idClientes++;
-					clearRegistro();
-					JOptionPane.showMessageDialog(null,"Registro Satisfactorio" ,"Información", JOptionPane.INFORMATION_MESSAGE);
+						crearCliente();
 					}
 				});
 				okButton.setActionCommand("OK");
@@ -144,10 +148,19 @@ public class RegistrarCliente extends JDialog {
 		txtId.setText("C-"+Empresa.idClientes);
 		txtNombre.setText("");
 		txtDireccion.setText("");
-
-		
 	}
 	
+	private void crearCliente() {
+		if(!txtIdentificacion.getText().isEmpty() && !txtNombre.getText().isEmpty() && !txtDireccion.getText().isEmpty()) {
+			Cliente client = new Cliente(txtId.getText(),txtIdentificacion.getText(), txtNombre.getText(), txtDireccion.getText());
+			Empresa.getInstance().getMisclientes().add(client);
+			Empresa.idClientes++;
+			clearRegistro();
+			JOptionPane.showMessageDialog(null,"Registro Satisfactorio" ,"Información", JOptionPane.INFORMATION_MESSAGE);
+		} else {
+			JOptionPane.showMessageDialog(null,"Hubo un error al registrar el cliente" ,"Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
 	
 }
 

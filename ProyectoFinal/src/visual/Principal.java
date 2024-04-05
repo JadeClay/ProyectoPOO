@@ -163,7 +163,7 @@ public class Principal extends JFrame {
 		JMenuItem mntmCrear = new JMenuItem("Registrar");
 		mntmCrear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				RegProyecto ventana = new RegProyecto();
+				RegistrarContrato ventana = new RegistrarContrato();
 				ventana.setVisible(true);
 			}
 		});
@@ -180,24 +180,6 @@ public class Principal extends JFrame {
 			}
 		});
 		mnProyectos.add(mntmNewMenuItem);
-		
-		JMenu mnContratos = new JMenu("Contratos");
-		menuBar.add(mnContratos);
-		
-		JMenuItem mntmRegContrato = new JMenuItem("Registrar");
-		mntmRegContrato.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				RegistrarContrato regCont = new RegistrarContrato();
-				regCont.setVisible(true);
-			}
-		});
-		mnContratos.add(mntmRegContrato);
-		
-		JSeparator separator_3 = new JSeparator();
-		mnContratos.add(separator_3);
-		
-		JMenuItem mntmListContrato = new JMenuItem("Listado");
-		mnContratos.add(mntmListContrato);
 		
 		JPanel backgroundPanel = new JPanel();
 		backgroundPanel.setBounds(0, 23, 797, 562);

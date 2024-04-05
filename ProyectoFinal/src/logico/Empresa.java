@@ -221,4 +221,20 @@ public class Empresa implements Serializable {
 		return null;
 	}
 
+	public Cliente buscarClienteByIdentificador(String id) {
+		Cliente aux = null;
+		boolean encontrado = false;
+		
+		int i=0;
+		while(!encontrado && i<misclientes.size()) {
+			if(misclientes.get(i).getIdentificacion().equalsIgnoreCase(id)) {
+				aux = misclientes.get(i);
+				encontrado = true;
+			}
+			i++;
+		}
+		
+		return aux;
+	}
+
 }

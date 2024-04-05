@@ -6,13 +6,15 @@ import java.util.ArrayList;
 public class Cliente implements Serializable {
 
 	private String id;
+	private String identificacion;
 	private String nombre;
 	private String direccion;
 	private ArrayList<Proyecto> losProyectos;
 	
-	public Cliente(String id, String nombre, String direccion) {
+	public Cliente(String id, String identificacion, String nombre, String direccion) {
 		super();
 		this.id = id;
+		this.identificacion = identificacion;
 		this.nombre = nombre;
 		this.direccion = direccion;
 		this.losProyectos = new ArrayList<>();
@@ -49,6 +51,14 @@ public class Cliente implements Serializable {
 
 	public void setLosProyectos(ArrayList<Proyecto> losProyectos) {
 		this.losProyectos = losProyectos;
+	}
+	
+	public String getIdentificacion() {
+		return identificacion;
+	}
+	
+	public void setIdentificacion(String identificacion) {
+		this.identificacion = identificacion;
 	}
 
 
