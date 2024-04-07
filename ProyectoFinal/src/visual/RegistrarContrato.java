@@ -611,7 +611,7 @@ public class RegistrarContrato extends JDialog {
 		
 		fecha.setTime(calendario.getTimeInMillis());
 		
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		
 		txtFechaEstimada.setText(dateFormat.format(fecha));
     }
