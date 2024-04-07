@@ -187,38 +187,28 @@ public class Empresa implements Serializable {
 		return result;
 	}
 
-	public Proyecto getProyectoById(String id) {
+	public Proyecto buscarProyectoById(String id) {
+		Proyecto aux = null;
 		
 		for (Proyecto p : losproyectos) {
 			if (p.getId().equalsIgnoreCase(id)) {
-				return p;
+				aux = p;
 			}
 		}
-		return null;
+		
+		return aux;
 	}
 	
-	public Cliente getClienteById(String id) {
+	public Cliente buscarClienteById(String id) {
+		Cliente aux = null;
 		
 		for (Cliente c : misclientes) {
 			if (c.getId().equalsIgnoreCase(id)) {
-				return c;
+				aux = c;
 			}
 		}
-		return null;
-	}
-
-	public String getPosiDeTrabajador(Trabajador t) { 
-
-		if (t instanceof Programador) {
-			return "Programador ";
-		}else if (t instanceof Planificador) {
-			return "Planificador";
-		}else if (t instanceof JefeProyecto) {
-			return "JefeProyecto";
-		}else if (t instanceof Disenador) {
-			return "Diseñador   ";
-		}
-		return null;
+		
+		return aux;
 	}
 
 	public Cliente buscarClienteByIdentificador(String id) {
@@ -232,6 +222,54 @@ public class Empresa implements Serializable {
 				encontrado = true;
 			}
 			i++;
+		}
+		
+		return aux;
+	}
+	
+	public ArrayList<JefeProyecto> getJefeProyectosDisponibles() {
+		ArrayList<JefeProyecto> aux = new ArrayList<JefeProyecto>();
+		
+		for(Trabajador t : mistrabajadores) {
+			if(t instanceof JefeProyecto && t.getCantDeProyectosAsignados() < 2) {
+				aux.add((JefeProyecto) t);
+			}
+		}
+		
+		return aux;
+	}
+
+	public ArrayList<Disenador> getDisenadoresDisponibles() {
+		ArrayList<Disenador> aux = new ArrayList<Disenador>();
+		
+		for(Trabajador t : mistrabajadores) {
+			if(t instanceof Disenador && t.getCantDeProyectosAsignados() < 2) {
+				aux.add((Disenador) t);
+			}
+		}
+		
+		return aux;
+	}
+
+	public ArrayList<Planificador> getPlanificadoresDisponibles() {
+		ArrayList<Planificador> aux = new ArrayList<Planificador>();
+		
+		for(Trabajador t : mistrabajadores) {
+			if(t instanceof Planificador) {
+				aux.add((Planificador) t);
+			}
+		}
+		
+		return aux;
+	}
+	
+	public ArrayList<Programador> getProgramadoresDisponibles() {
+		ArrayList<Programador> aux = new ArrayList<Programador>();
+		
+		for(Trabajador t : mistrabajadores) {
+			if(t instanceof Programador && t.getCantDeProyectosAsignados() < 1) {
+				aux.add((Programador) t);
+			}
 		}
 		
 		return aux;

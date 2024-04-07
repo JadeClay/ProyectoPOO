@@ -3,6 +3,7 @@ package logico;
 import java.io.Serializable;
 
 public class Disenador extends Trabajador implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private int aniosExp;
 
 	public Disenador(String id, String identificacion, String nombre, String apellidos, String direccion, String sexo,

@@ -2,8 +2,10 @@ package logico;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Trabajador implements Serializable {
+	private static final long serialVersionUID = 1L;
 	protected String id;
 	protected String identificacion;
 	protected String nombre;
@@ -79,6 +81,26 @@ public class Trabajador implements Serializable {
 			historialPuntuacion.add(historialActual + puntosAModificar);
 		}
 		
+	}
+	
+	public int getCantDeProyectosAsignados() {
+		int result = 0;
+		
+		for(Contrato c : Empresa.getInstance().getLoscontratos()) {
+			Proyecto p = c.getProyecto();
+			
+			if(!c.activo(new Date())) {
+				int i = 0;
+				for(Trabajador t : p.getLosTrabajadores()) {
+					if(t.getId().equalsIgnoreCase(id)) {
+						result++;
+					}
+					i++;
+				}
+			}
+		}
+		
+		return result;
 	}
 
 	public String getPosiDeTrabajador(Trabajador t) { 

@@ -25,8 +25,12 @@ import javax.swing.border.EtchedBorder;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.awt.event.ActionEvent;
 import javax.swing.event.ChangeListener;
 
@@ -49,6 +53,7 @@ import javax.swing.UIManager;
 import java.awt.Color;
 import java.awt.Font;
 import javax.swing.SwingConstants;
+import javax.swing.ListSelectionModel;
 
 public class RegistrarContrato extends JDialog {
 
@@ -62,16 +67,16 @@ public class RegistrarContrato extends JDialog {
     private JTextField txtNombre;
     private JTextField txtDireccion;
     private JTextField txtIdentificacion;
-    private JTextField textField;
+    private JTextField txtFechaEstimada;
     private JButton btnBuscar;
+    private JSpinner spnHoras;
     private JList<Programador> listProgramadoresDisp;
     private JList<Programador> listProgramadoresAsignados;
-    private boolean existeCliente;
-    private static DefaultListModel<Trabajador> model = new DefaultListModel();
+    private JComboBox<JefeProyecto> comboBoxJefe;
+    private JComboBox<Disenador> comboBoxDisenador;
+    private JComboBox<Planificador> comboBoxPlanificador;
     private DefaultListModel<Programador> modelAsignados = new DefaultListModel<>();
     private DefaultListModel<Programador> modelDisp = new DefaultListModel<>();
-
-
 
     /**
      * Launch the application.
@@ -96,6 +101,7 @@ public class RegistrarContrato extends JDialog {
         setBounds(100, 100, 607, 666);
         getContentPane().setLayout(new BorderLayout());
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+        setLocationRelativeTo(null);
         getContentPane().add(contentPanel, BorderLayout.CENTER);
         contentPanel.setLayout(new BorderLayout(0, 0));
         {
@@ -204,6 +210,7 @@ public class RegistrarContrato extends JDialog {
                 panel_1.add(scrollPane);
                 
                 listProgramadoresDisp = new JList<Programador>(); // Removed re-declaration here
+                listProgramadoresDisp.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
                 scrollPane.setViewportView(listProgramadoresDisp);
                 
                 JPanel panel_2 = new JPanel();
@@ -216,6 +223,7 @@ public class RegistrarContrato extends JDialog {
                 panel_2.add(scrollPane_1, BorderLayout.CENTER);
                 
                 listProgramadoresAsignados = new JList(); // Removed re-declaration here
+                listProgramadoresAsignados.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
                 scrollPane_1.setViewportView(listProgramadoresAsignados);
                 
                 fillProgramadoresList();
@@ -223,7 +231,8 @@ public class RegistrarContrato extends JDialog {
                     @Override
                     public java.awt.Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                         if (value instanceof Programador) {
-                            value = ((Programador) value).getNombre(); // Obtén el nombre del Programador
+                        	Programador aux = (Programador) value;
+                            value = aux.getNombre() + " " + aux.getApellidos() + " - " + aux.getLenguaje(); // Obtén el nombre del Programador
                         }
                         return (java.awt.Component) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                     }
@@ -232,7 +241,8 @@ public class RegistrarContrato extends JDialog {
                     @Override
                     public java.awt.Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                         if (value instanceof Programador) {
-                            value = ((Programador) value).getNombre(); // Obtén el nombre del Programador
+                        	Programador aux = (Programador) value;
+                            value = aux.getNombre() + " " + aux.getApellidos() + " - " + aux.getLenguaje(); // Obtén el nombre del Programador
                         }
                         return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                     }
@@ -250,34 +260,79 @@ public class RegistrarContrato extends JDialog {
                 lblHoras.setBounds(12, 29, 86, 16);
                 panel_3.add(lblHoras);
                 
-                JSpinner spnHoras = new JSpinner();
+                spnHoras = new JSpinner();
                 spnHoras.setModel(new SpinnerNumberModel(new Integer(1), new Integer(1), null, new Integer(1)));
                 spnHoras.setBounds(95, 26, 87, 22);
+                spnHoras.addChangeListener(new ChangeListener() {
+					@Override
+					public void stateChanged(ChangeEvent arg0) {
+						calcularFechaEstimada();
+					}
+                });
                 panel_3.add(spnHoras);
                 
                 JLabel lblFechaFin = new JLabel("Fecha fin estimada:");
                 lblFechaFin.setFont(new Font("Tahoma", Font.BOLD, 13));
-                lblFechaFin.setBounds(43, 61, 112, 16);
+                lblFechaFin.setBounds(35, 61, 133, 16);
                 panel_3.add(lblFechaFin);
                 
-                textField = new JTextField();
-                textField.setEditable(false);
-                textField.setBounds(53, 90, 86, 22);
-                panel_3.add(textField);
-                textField.setColumns(10);
+                txtFechaEstimada = new JTextField();
+                txtFechaEstimada.setEditable(false);
+                txtFechaEstimada.setBounds(53, 90, 86, 22);
+                panel_3.add(txtFechaEstimada);
+                txtFechaEstimada.setColumns(10);
                 
                 JLabel label_2 = new JLabel("Jefe del Proyecto:");
                 label_2.setBounds(10, 84, 138, 14);
                 panel_Pr.add(label_2);
                 
-                JComboBox<Trabajador> comboBoxJefe = new JComboBox<>();
+                comboBoxJefe = new JComboBox<>();
+                comboBoxJefe.setRenderer(new DefaultListCellRenderer() {
+                    @Override
+                    public java.awt.Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                    	
+                    	if(value == null) {
+	                    	value = "Seleccionar";
+                    	} else {
+                    		JefeProyecto aux = (JefeProyecto) value;
+	                    	value = aux.getNombre() + " " + aux.getApellidos() + " - " + aux.getEvaluacionActual(); 
+                    	}
+                    	
+                    	
+                        return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                    }
+                });
+                comboBoxJefe.addActionListener(new ActionListener() {
+                	public void actionPerformed(ActionEvent e) {
+                		calcularFechaEstimada();
+                	}
+                });
                 comboBoxJefe.setBounds(127, 81, 194, 22);
                 panel_Pr.add(comboBoxJefe);
                 
                 
-                JComboBox<Trabajador> comboBoxDiseñador = new JComboBox<>();
-                comboBoxDiseñador.setBounds(127, 111, 194, 22);
-                panel_Pr.add(comboBoxDiseñador);
+                comboBoxDisenador = new JComboBox<>();
+                comboBoxDisenador.setRenderer(new DefaultListCellRenderer() {
+                    @Override
+                    public java.awt.Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                    	
+                    	if(value == null) {
+	                    	value = "Seleccionar";
+                    	} else {
+                    		Disenador aux = (Disenador) value;
+	                    	value = aux.getNombre() + " " + aux.getApellidos() + " - " + aux.getEvaluacionActual(); 
+                    	}
+                    	
+                        return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                    }
+                });
+                comboBoxDisenador.addActionListener(new ActionListener() {
+                	public void actionPerformed(ActionEvent e) {
+                		calcularFechaEstimada();
+                	}
+                });
+                comboBoxDisenador.setBounds(127, 111, 194, 22);
+                panel_Pr.add(comboBoxDisenador);
                 
                 JLabel label_3 = new JLabel("Dise\u00F1ador:");
                 label_3.setBounds(10, 114, 138, 14);
@@ -287,42 +342,30 @@ public class RegistrarContrato extends JDialog {
                 label_4.setBounds(10, 144, 138, 14);
                 panel_Pr.add(label_4);
                 
-                JComboBox<Trabajador> comboBoxPlanificador = new JComboBox<>();
-                comboBoxPlanificador.setBounds(127, 141, 194, 22);
-                panel_Pr.add(comboBoxPlanificador);
-                
-                fillComboBoxes(comboBoxJefe, comboBoxDiseñador, comboBoxPlanificador);
-                comboBoxJefe.setRenderer(new DefaultListCellRenderer() {
-                    @Override
-                    public java.awt.Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                        if (value instanceof Trabajador) {
-                            value = ((Trabajador) value).getNombre(); // Obtén el nombre del Trabajador
-                        }
-                        return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                    }
-                });
-
-                comboBoxDiseñador.setRenderer(new DefaultListCellRenderer() {
-                    @Override
-                    public java.awt.Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                        if (value instanceof Trabajador) {
-                            value = ((Trabajador) value).getNombre(); // Obtén el nombre del Trabajador
-                        }
-                        return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                    }
-                });
-
+                comboBoxPlanificador = new JComboBox<>();
                 comboBoxPlanificador.setRenderer(new DefaultListCellRenderer() {
                     @Override
                     public java.awt.Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                        if (value instanceof Trabajador) {
-                            value = ((Trabajador) value).getNombre(); // Obtén el nombre del Trabajador
-                        }
+                    	
+                    	if(value == null) {
+	                    	value = "Seleccionar";
+                    	} else {
+                    		Planificador aux = (Planificador) value;
+	                    	value = aux.getNombre() + " " + aux.getApellidos() + " - " + aux.getEvaluacionActual(); 
+                    	}
+                    	
                         return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                     }
                 });
-
+                comboBoxPlanificador.addActionListener(new ActionListener() {
+                	public void actionPerformed(ActionEvent e) {
+                		calcularFechaEstimada();
+                	}
+                });
+                comboBoxPlanificador.setBounds(127, 141, 194, 22);
+                panel_Pr.add(comboBoxPlanificador);
                 
+                fillComboBoxes();      
                 
                 JButton btnQuitarEmpleado = new JButton("<<<");
                 btnQuitarEmpleado.setBounds(224, 225, 97, 25);
@@ -336,6 +379,7 @@ public class RegistrarContrato extends JDialog {
                         if (selectedProgramador != null && !modelDisp.contains(selectedProgramador)) {
                             modelDisp.addElement(selectedProgramador); // Agregar a la lista de disponibles
                             modelAsignados.removeElement(selectedProgramador); // Quitar de la lista de asignados
+                            calcularFechaEstimada();
                         }
                     }
                 });
@@ -350,9 +394,10 @@ public class RegistrarContrato extends JDialog {
                         Programador selectedProgramador = listProgramadoresDisp.getSelectedValue();
                         
                         // Si hay un programador seleccionado y no está en la lista de asignados, agregarlo
-                        if (selectedProgramador != null && !modelAsignados.contains(selectedProgramador)) {
+                        if (selectedProgramador != null && !modelAsignados.contains(selectedProgramador) && modelAsignados.size() < 3) {
                             modelAsignados.addElement(selectedProgramador); // Agregar a la lista de asignados
                             modelDisp.removeElement(selectedProgramador); // Quitar de la lista de disponibles
+                            calcularFechaEstimada();
                         }
                     }
                 });
@@ -367,14 +412,21 @@ public class RegistrarContrato extends JDialog {
                 okButton = new JButton("Formalizar");
                 okButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-
-
-                        //Contrato contrato = new Contrato(lblIdContrato.getText(), client, client.getLosProyectos().get(comboBoxPoyectos.getSelectedIndex()), (int)spnDias.getValue());
-                        //System.out.println(contrato.getFechaEntrega());
-
-                        //Empresa.getInstance().getLoscontratos().add(contrato);
-                        clearContract();
-                        JOptionPane.showMessageDialog(null,"Registro Satisfactorio" ,"Información", JOptionPane.INFORMATION_MESSAGE);
+                    	
+                    	Proyecto proyecto = manejarProyecto();
+                    	
+                    	if(proyecto != null) {
+	                    	manejarCliente();
+	                    	
+	                    	if(client != null) {
+		                        Contrato contrato = new Contrato(new String("CL-" + Empresa.getInstance().idContratos), client, proyecto, new Integer(spnHoras.getValue().toString()));
+		                        Empresa.getInstance().registrarContrato(contrato);
+		                        clearContract();
+		                        JOptionPane.showMessageDialog(null,"Registro Satisfactorio" ,"Información", JOptionPane.INFORMATION_MESSAGE);
+	                    	} else {
+	                    		JOptionPane.showMessageDialog(null, "Hubo un error en el manejo del cliente", "Error", JOptionPane.ERROR_MESSAGE);
+	                    	}
+                        }
                     }
                 });
                 okButton.setActionCommand("OK");
@@ -394,42 +446,81 @@ public class RegistrarContrato extends JDialog {
         }
     }
     
-    private void fillComboBoxes(JComboBox<Trabajador> comboBoxJefe, JComboBox<Trabajador> comboBoxDiseñador,
-            JComboBox<Trabajador> comboBoxPlanificador) {
-        ArrayList<Trabajador> trabajadores = Empresa.getInstance().getMistabajadores();
+    protected Proyecto manejarProyecto() {
+		Proyecto proyecto = null;
+		
+    	ArrayList<Trabajador> trabajadores = new ArrayList<Trabajador>();
+    	
+    	if(comboBoxJefe.getSelectedItem() != null && comboBoxDisenador.getSelectedItem() != null &&  comboBoxPlanificador.getSelectedItem() != null && modelAsignados.size() >= 2 && modelAsignados.size() <= 3) {
+	    	for(int i = 0; i < modelAsignados.getSize(); i++) {
+	    		trabajadores.add(modelAsignados.getElementAt(i));
+	    	}
+	    	trabajadores.add((JefeProyecto) comboBoxJefe.getSelectedItem());
+	    	trabajadores.add((Disenador) comboBoxDisenador.getSelectedItem());
+	    	trabajadores.add((Planificador) comboBoxPlanificador.getSelectedItem());
+	    	
+	    	if(!txtNomPro.getText().isEmpty()) {
+		    	proyecto = new Proyecto(txtIdProyecto.getText(), txtNomPro.getText(), trabajadores);
+		    	Empresa.getInstance().registarProyecto(proyecto);
+		    	((JefeProyecto) comboBoxJefe.getSelectedItem()).setCantTrabajadores(trabajadores.size()-1);
+		    	
+	    	} else {
+	    		JOptionPane.showMessageDialog(null, "Necesita llenar el nombre del proyecto", "Error", JOptionPane.ERROR_MESSAGE);
+	    	}
+    	
+    	} else {
+    		JOptionPane.showMessageDialog(null, "Verifique la selección de empleados", "Error", JOptionPane.ERROR_MESSAGE);
+    	}
+    	
+		return proyecto;
+	}
 
-        for (Trabajador trabajador : trabajadores) {
-            if (trabajador instanceof JefeProyecto) {
-                comboBoxJefe.addItem(trabajador);
-            }
+	protected void manejarCliente() {
+		if(client != null) {
+			client.setIdentificacion(txtIdentificacion.getText());
+			client.setNombre(txtNombre.getText());
+			client.setDireccion(txtDireccion.getText());
+		} else {
+			client = new Cliente(txtIdCliente.getText(), txtIdentificacion.getText(), txtNombre.getText(), txtDireccion.getText());
+			Empresa.getInstance().registrarCliente(client);
+		}
+		
+	}
+
+	private void fillComboBoxes() {
+		comboBoxJefe.removeAllItems();
+		comboBoxDisenador.removeAllItems();
+		comboBoxPlanificador.removeAllItems();
+		
+    	comboBoxJefe.addItem(null);
+    	comboBoxDisenador.addItem(null);
+    	comboBoxPlanificador.addItem(null);
+    	
+    	
+        for (JefeProyecto j : Empresa.getInstance().getJefeProyectosDisponibles()) {
+        	comboBoxJefe.addItem(j);
         }
 
-        for (Trabajador trabajador : trabajadores) {
-            if (trabajador instanceof Disenador) {
-                comboBoxDiseñador.addItem(trabajador);
-            }
+        for (Disenador d : Empresa.getInstance().getDisenadoresDisponibles()) {
+        	comboBoxDisenador.addItem(d);
         }
 
-        for (Trabajador trabajador : trabajadores) {
-            if (trabajador instanceof Planificador) {
-                comboBoxPlanificador.addItem(trabajador);
-            }
+        for (Planificador p : Empresa.getInstance().getPlanificadoresDisponibles()) {
+        	comboBoxPlanificador.addItem(p);
         }
     }
-
     
     private void fillProgramadoresList() {
-        ArrayList<Trabajador> trabajadores = Empresa.getInstance().getMistabajadores();
-
-        DefaultListModel<Programador> model = new DefaultListModel<>();
+    	modelAsignados.clear();
+    	modelDisp.clear();
+        ArrayList<Programador> trabajadores = Empresa.getInstance().getProgramadoresDisponibles();
+        System.out.println(trabajadores.size());
         for (Trabajador trabajador : trabajadores) {
-            if (trabajador instanceof Programador) {
-                model.addElement((Programador) trabajador);
-            }
+           modelDisp.addElement((Programador) trabajador);
         }
-        listProgramadoresDisp.setModel(model); // Aquí se asigna el modelo a la lista de programadores disponibles
-
-        listProgramadoresAsignados.setModel(modelAsignados); // Aquí se asigna el modelo de programadores asignados a la lista correspondiente
+        
+        listProgramadoresDisp.setModel(modelDisp); // Aquí se asigna el modelo a la lista de programadores disponibles
+        listProgramadoresAsignados.setModel(modelAsignados); // Aquí se asigna el modelo a la lista de programadores disponibles
     }
    
 
@@ -443,14 +534,11 @@ public class RegistrarContrato extends JDialog {
                 txtNombre.setText(aux.getNombre());
                 txtDireccion.setText(aux.getDireccion());
                 txtIdCliente.setText(aux.getId());
-                existeCliente = true;
-            } else
-
- {
+                client = aux;
+            } else {
                 txtIdCliente.setText(new String("C-"+Empresa.getInstance().idClientes));
                 txtNombre.setText("");
                 txtDireccion.setText("");
-                existeCliente = false;
             }
             
             txtNombre.setEnabled(true);
@@ -458,31 +546,44 @@ public class RegistrarContrato extends JDialog {
         }
     }
     
-    private Cliente guardarCliente() {
-        Cliente aux = null;
-        if(existeCliente) {
-            aux = Empresa.getInstance().buscarClienteByIdentificador(txtIdCliente.getText());
-            aux.setNombre(txtNombre.getText());
-            aux.setDireccion(txtDireccion.getText());
-            
-        }else {
-            if(!txtNombre.getText().isEmpty() && !txtDireccion.getText().isEmpty() && !txtIdentificacion.getText().isEmpty()) {
-                String id = txtIdCliente.getText();
-                Empresa.getInstance().idClientes++;
-                aux = new Cliente(id,txtIdentificacion.getText(),txtNombre.getText(),txtDireccion.getText());
-                Empresa.getInstance().registrarCliente(aux);
-            }
-        }
-        
-        return aux;
-    }
-    
     private void clearContract() {
-        Empresa.idContratos++;
         txtDireccion.setText("");
         txtIdCliente.setText("C-");
         txtNombre.setText("");
-        txtNomPro.setText("P-");
-            
+        txtIdProyecto.setText("P-"+Empresa.getInstance().idProyectos);
+        txtNomPro.setText("");
+        fillProgramadoresList();
+        fillComboBoxes();
+    }
+    
+    private void calcularFechaEstimada() {
+    	ArrayList<Trabajador> trabajadores = new ArrayList<Trabajador>();
+  
+	    for(int i = 0; i < modelAsignados.getSize(); i++) {
+	    	trabajadores.add(modelAsignados.getElementAt(i));
+	    }
+	    
+	    trabajadores.add((JefeProyecto) comboBoxJefe.getSelectedItem());
+	    trabajadores.add((Disenador) comboBoxDisenador.getSelectedItem());
+	    trabajadores.add((Planificador) comboBoxPlanificador.getSelectedItem());
+	    
+	    Date fecha = new Date();
+	    int horas = new Integer(spnHoras.getValue().toString());
+		int diasNecesarios = horas/6;
+		int trabajadoresAsignados = trabajadores.size();
+		int duracionEstimadaEnDias = diasNecesarios;
+		
+		if(trabajadoresAsignados > 0) {
+			duracionEstimadaEnDias = Math.round(diasNecesarios/trabajadoresAsignados);
+		}
+		
+		Calendar calendario = Calendar.getInstance();
+		calendario.add(Calendar.DAY_OF_MONTH, duracionEstimadaEnDias);
+		
+		fecha.setTime(calendario.getTimeInMillis());
+		
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+		
+		txtFechaEstimada.setText(dateFormat.format(fecha));
     }
 }

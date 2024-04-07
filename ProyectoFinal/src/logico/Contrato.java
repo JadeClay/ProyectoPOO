@@ -6,6 +6,7 @@ import java.util.Date;
 
 public class Contrato implements Serializable {
 
+	private static final long serialVersionUID = 1L;
 	private String id;
 	private Cliente cliente;
 	private Proyecto proyecto;
@@ -21,8 +22,14 @@ public class Contrato implements Serializable {
 		this.cliente = cliente;
 		this.proyecto = proyecto;
 		this.fechaInicio = new Date();
+		
+		int diasNecesarios = horas/6;
+		int trabajadoresAsignados = proyecto.getLosTrabajadores().size();
+		int duracionEstimadaEnDias = Math.round(diasNecesarios/trabajadoresAsignados);
+		
 		Calendar calendario = Calendar.getInstance();
-		calendario.add(Calendar.HOUR_OF_DAY, horas);	
+		calendario.add(Calendar.DAY_OF_MONTH, duracionEstimadaEnDias);
+		
 		this.fechaEntrega = new Date();
 		fechaEntrega.setTime(calendario.getTimeInMillis());
 		this.prorrogado = false;
@@ -98,6 +105,16 @@ public class Contrato implements Serializable {
 
 	public void setDiasContrato(int horas) {
 		this.horas = horas;
+	}
+	
+	public boolean activo(Date fecha) {
+		boolean result = false;
+		
+		if(this.fechaEntrega.after(fecha)) {
+			result = true;
+		}
+		
+		return result;
 	}
 
 	

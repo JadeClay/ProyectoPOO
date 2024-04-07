@@ -30,6 +30,7 @@ public class ListadoTrabajadores extends JDialog {
 	private static DefaultTableModel model;
 	private static Object[] rows;
 	private Trabajador selected = null;
+	private JButton btnVer;
 	
 	/**
 	 * Launch the application.
@@ -84,6 +85,7 @@ public class ListadoTrabajadores extends JDialog {
 							int index = table.getSelectedRow();
 							if(index > -1){
 								btnDelete.setEnabled(true);
+								btnVer.setEnabled(true);
 								selected = Empresa.getInstance().buscarTrabajadorById(table.getValueAt(index, 0).toString());
 								System.out.print(selected.getId());
 							}
@@ -123,6 +125,19 @@ public class ListadoTrabajadores extends JDialog {
 						dispose();
 					}	
 				});
+				{
+					btnVer = new JButton("Ver perfil");
+					btnVer.setEnabled(false);
+					btnVer.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							if(selected != null) {
+								PerfilTrabajador ventana = new PerfilTrabajador(selected);
+								ventana.setVisible(true);
+							}
+						}
+					});
+					buttonPane.add(btnVer);
+				}
 				btnCancel.setActionCommand("Cancel");
 				buttonPane.add(btnCancel);
 			}
