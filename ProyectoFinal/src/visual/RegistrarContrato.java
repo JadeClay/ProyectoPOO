@@ -482,7 +482,8 @@ public class RegistrarContrato extends JDialog {
 			client.setDireccion(txtDireccion.getText());
 		} else {
 			client = new Cliente(txtIdCliente.getText(), txtIdentificacion.getText(), txtNombre.getText(), txtDireccion.getText());
-			Empresa.getInstance().registrarCliente(client);
+			Empresa.getInstance().getMisclientes().add(client);
+			Empresa.idClientes++;
 		}
 		
 	}

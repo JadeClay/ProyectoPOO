@@ -101,15 +101,6 @@ public class Empresa implements Serializable {
 		loscontratos.remove(contrato);
 	}
 	
-	public void registrarCliente(Cliente cliente) {
-		idClientes++;
-		misclientes.add(cliente);
-	}
-	
-	public void eliminarCliente(Cliente cliente) {
-		misclientes.remove(cliente);
-	}
-	
 	public void registarProyecto(Proyecto proyecto) {
 		idProyectos++;
 		losproyectos.add(proyecto);
@@ -126,6 +117,13 @@ public class Empresa implements Serializable {
 	    }
 	}
 	
+	public void eliminarCliente(Cliente client) {
+		
+		for (Proyecto p : client.getLosProyectos()) {
+			p.setEstado(false);//o eliminarlos
+		}
+		misclientes.remove(client);
+	}
 	
 	private void recuperarUltimoIdTrabajador() {
 		Trabajador aux = null;

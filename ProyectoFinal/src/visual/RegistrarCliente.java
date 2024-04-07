@@ -15,6 +15,7 @@ import com.sun.security.ntlm.Client;
 import logico.Cliente;
 import logico.Empresa;
 import logico.Proyecto;
+import sun.util.locale.provider.AuxLocaleProviderAdapter;
 
 import javax.swing.UIManager;
 import java.awt.Color;
@@ -42,7 +43,7 @@ public class RegistrarCliente extends JDialog {
 	 */
 	public static void main(String[] args) {
 		try {
-			RegistrarCliente dialog = new RegistrarCliente();
+			RegistrarCliente dialog = new RegistrarCliente(null);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -53,7 +54,7 @@ public class RegistrarCliente extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public RegistrarCliente() {
+	public RegistrarCliente(Cliente aux) {
 		setTitle("Registrar cliente");
 		setModal(true);
 		setResizable(false);
@@ -119,10 +120,24 @@ public class RegistrarCliente extends JDialog {
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				okButton = new JButton("Registrar");
+				if (aux == null) {
+					okButton = new JButton("Registrar");
+				} else {
+					okButton = new JButton("Modificar");	
+				}
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						crearCliente();
+						if (aux == null) {
+							crearCliente();
+						} else {
+							aux.setDireccion(txtDireccion.getText());
+							aux.setIdentificacion(txtIdentificacion.getText());
+							aux.setNombre(txtNombre.getText());
+							JOptionPane.showMessageDialog(null,"Modificacion Exitosa" ,"Información", JOptionPane.INFORMATION_MESSAGE);
+							dispose();
+							ListadoClientes.loadClients();
+						}
+						
 					}
 				});
 				okButton.setActionCommand("OK");
@@ -140,7 +155,12 @@ public class RegistrarCliente extends JDialog {
 				buttonPane.add(cancelButton);
 			}
 		}
-		
+		if (aux != null) {
+			txtId.setText(aux.getId());
+			txtIdentificacion.setText(aux.getIdentificacion());
+			txtNombre.setText(aux.getNombre());
+			txtDireccion.setText(aux.getDireccion());
+		}
 		
 	}
 	

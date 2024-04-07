@@ -87,7 +87,6 @@ public class ListadoTrabajadores extends JDialog {
 								btnDelete.setEnabled(true);
 								btnVer.setEnabled(true);
 								selected = Empresa.getInstance().buscarTrabajadorById(table.getValueAt(index, 0).toString());
-								System.out.print(selected.getId());
 							}
 						}
 					});

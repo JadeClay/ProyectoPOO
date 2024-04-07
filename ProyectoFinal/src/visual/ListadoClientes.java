@@ -114,6 +114,7 @@ public class ListadoClientes extends JDialog {
 				btnEliminar = new JButton("Eliminar");
 				btnEliminar.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
+						Empresa.getInstance().eliminarCliente(client);
 						loadClients();
 					}
 				});
@@ -121,6 +122,13 @@ public class ListadoClientes extends JDialog {
 			}
 			{
 				btnModificar = new JButton("Modificar");
+				btnModificar.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						RegistrarCliente modifCli = new RegistrarCliente(client);
+						modifCli.setVisible(true);
+						
+					}
+				});
 				buttonPane.add(btnModificar);
 			}
 			{
@@ -132,6 +140,12 @@ public class ListadoClientes extends JDialog {
 				});
 				{
 					btnNewButton = new JButton("Ver Perfil");
+					btnNewButton.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							PerfilCliente perCli = new PerfilCliente(client);
+							perCli.setVisible(true);
+						}
+					});
 					buttonPane.add(btnNewButton);
 				}
 				btnSalir.setActionCommand("Cancel");
@@ -141,7 +155,7 @@ public class ListadoClientes extends JDialog {
 		loadClients();
 	}
 
-	private void loadClients() { 
+	public static void loadClients() { 
 		model.setRowCount(0);
 		rows = new Object[model.getColumnCount()];
 		

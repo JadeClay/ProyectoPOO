@@ -145,12 +145,12 @@ public class Principal extends JFrame {
 		mntmRegistrar = new JMenuItem("Registrar");
 		mntmRegistrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				RegistrarCliente regCli = new RegistrarCliente();
+				RegistrarCliente regCli = new RegistrarCliente(null);
 				regCli.setVisible(true);
 	
 			}
 		});
-		mnClientes.add(mntmRegistrar);
+		mnClientes.add(mntmRegistrar); 
 		
 		JSeparator separator_1 = new JSeparator();
 		mnClientes.add(separator_1);
