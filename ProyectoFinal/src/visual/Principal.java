@@ -28,6 +28,7 @@ public class Principal extends JFrame {
 
 	private JPanel contentPane;
 	private JMenuItem mntmRegistrar;
+	private JMenuItem mntmListadoClientes;
 
 	/**
 	 * Launch the application.
@@ -154,7 +155,14 @@ public class Principal extends JFrame {
 		JSeparator separator_1 = new JSeparator();
 		mnClientes.add(separator_1);
 		
-		JMenuItem mntmListadoClientes = new JMenuItem("Listado");
+		mntmListadoClientes = new JMenuItem("Listado");
+		mntmListadoClientes.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ListadoClientes ListCli = new ListadoClientes();
+				ListCli.setVisible(true);
+
+			}
+		});
 		mnClientes.add(mntmListadoClientes);
 		
 		JMenu mnProyectos = new JMenu("Proyectos");

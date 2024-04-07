@@ -62,5 +62,14 @@ public class Cliente implements Serializable {
 		this.identificacion = identificacion;
 	}
 
+	public int getCantProyectosActivos() {
+		int cant = 0;
+		for (Proyecto p : losProyectos) {
+			if (p.getEstado()) {
+				cant++;
+			}
+		}
+		return cant;
+	}
 
 }

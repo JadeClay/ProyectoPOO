@@ -9,12 +9,14 @@ public class Proyecto implements Serializable {
 	private String id;
 	private String nombre;
 	private ArrayList<Trabajador> losTrabajadores;
+	private boolean estado;
 	
 	public Proyecto(String id, String nombre, ArrayList<Trabajador> trabajadores) {
 		super();
 	    this.id = id;
 	    this.nombre = nombre;
 	    this.losTrabajadores = trabajadores;
+	    this.estado = true;
 	}
 
 	public String getId() {
@@ -39,6 +41,14 @@ public class Proyecto implements Serializable {
 
 	public void setLosTrabajadores(ArrayList<Trabajador> losTrabajadores) {
 		this.losTrabajadores = losTrabajadores; 
+	}
+
+	public boolean getEstado() {
+		return estado;
+	}
+
+	public void setEstado(boolean estado) {
+		this.estado = estado;
 	}
     
 }

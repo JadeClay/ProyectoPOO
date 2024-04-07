@@ -146,6 +146,7 @@ public class RegistrarCliente extends JDialog {
 	
 	private void clearRegistro() {
 		txtId.setText("C-"+Empresa.idClientes);
+		txtIdentificacion.setText("");
 		txtNombre.setText("");
 		txtDireccion.setText("");
 	}
