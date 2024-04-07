@@ -116,6 +116,18 @@ public class Contrato implements Serializable {
 		
 		return result;
 	}
+	
+	public void prorrogarProyecto(int horasProrrogadas) {
+	    if (horasProrrogadas > 0) {
+	        this.horas += horasProrrogadas;
+	        this.prorrogado = true; 
+	        Calendar calendar = Calendar.getInstance();
+	        calendar.setTime(this.fechaEntrega);
+	        calendar.add(Calendar.HOUR_OF_DAY, horasProrrogadas);
+	        this.fechaEntrega = calendar.getTime();
+	    }
+	}
+
 
 	
 }

@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -16,6 +15,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
+import logico.Contrato;
 import logico.Empresa;
 import logico.Proyecto;
 
@@ -25,6 +25,7 @@ public class ListadoProyecto extends JDialog {
     private JButton btnCancel;
     private JTable table;
     private JButton btnDelete;
+    private JButton btnFinalizarProrrogar;
     private static DefaultTableModel model;
     private static Object[] rows;
     private Proyecto selected = null;
@@ -66,7 +67,7 @@ public class ListadoProyecto extends JDialog {
                 scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
                 panel.add(scrollPane, BorderLayout.CENTER);
                 {
-                    String[] headers = { "ID", "Nombre", "Trabajadores" };
+                    String[] headers = { "ID", "Nombre", "Trabajadores", "Estado" }; // Agregamos el estado del proyecto
                     model = new DefaultTableModel() {
                         @Override
                         public boolean isCellEditable(int row, int column) {
@@ -78,6 +79,22 @@ public class ListadoProyecto extends JDialog {
                     table = new JTable();
                     table.setModel(model);
                     scrollPane.setViewportView(table);
+                    table.getSelectionModel().addListSelectionListener(event -> {
+                        if (!event.getValueIsAdjusting()) {
+                            int selectedRow = table.getSelectedRow();
+                            if (selectedRow != -1) {
+                                String projectId = (String) model.getValueAt(selectedRow, 0);
+                                selected = Empresa.getInstance().buscarProyectoById(projectId);
+                                if (selected != null) {
+                                    btnDelete.setEnabled(true);
+                                    btnFinalizarProrrogar.setEnabled(true);
+                                } else {
+                                    btnDelete.setEnabled(false);
+                                    btnFinalizarProrrogar.setEnabled(false);
+                                }
+                            }
+                        }
+                    });
                 }
             }
         }
@@ -87,6 +104,38 @@ public class ListadoProyecto extends JDialog {
             buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
             getContentPane().add(buttonPane, BorderLayout.SOUTH);
             {
+                btnFinalizarProrrogar = new JButton("Finalizar/Prorrogar");
+                btnFinalizarProrrogar.addActionListener(new ActionListener() {
+                	public void actionPerformed(ActionEvent e) {
+                	    if (selected != null) {
+                	        String[] options = {"Finalizar", "Prorrogar"};
+                	        int choice = JOptionPane.showOptionDialog(null, "¿Qué desea hacer con el proyecto?",
+                	                "Finalizar/Prorrogar Proyecto", JOptionPane.DEFAULT_OPTION,
+                	                JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                	        if (choice == 0) { // Finalizar
+                	            Contrato contrato = Empresa.getInstance().buscarContratoPorIdProyecto(selected.getId());
+                	            if (contrato != null) {
+                	                contrato.setProrrogado(false); // Cambiar el estado del contrato
+                	            }
+                	            Empresa.getInstance().eliminarProyecto(selected);
+                	            loadProyectos();
+                	        } else if (choice == 1) { // Prorrogar
+                	            String hours = JOptionPane.showInputDialog(null, "Ingrese la cantidad de horas a prorrogar:");
+                	            if (hours != null && !hours.isEmpty()) {
+                	                int hoursToExtend = Integer.parseInt(hours);
+                	                Contrato contrato = Empresa.getInstance().buscarContratoPorIdProyecto(selected.getId());
+                	                if (contrato != null) {
+                	                    contrato.prorrogarProyecto(hoursToExtend); // Llamar al método prorrogarProyecto en el contrato asociado al proyecto seleccionado
+                	                }
+                	            }
+                	        }
+                	    }
+                	}
+                });
+                btnFinalizarProrrogar.setEnabled(false);
+                buttonPane.add(btnFinalizarProrrogar);
+            }
+            {
                 btnDelete = new JButton("Eliminar");
                 btnDelete.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
@@ -95,7 +144,7 @@ public class ListadoProyecto extends JDialog {
                                     "Seguro desea eliminar el proyecto con ID: " + selected.getId(), "Eliminar",
                                     JOptionPane.WARNING_MESSAGE);
                             if (option == JOptionPane.YES_OPTION) {
-                               // Empresa.getInstance().eliminarProyecto(selected);
+                                Empresa.getInstance().eliminarProyecto(selected);
                                 loadProyectos();
                             }
                         }
@@ -128,10 +177,10 @@ public class ListadoProyecto extends JDialog {
             rows[0] = proyecto.getId();
             rows[1] = proyecto.getNombre();
             rows[2] = proyecto.getLosTrabajadores().size();
+            rows[3] = proyecto.getEstado() ? "Activo" : "Inactivo"; 
             model.addRow(rows);
         }
 
     }
 
 }
-

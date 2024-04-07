@@ -106,6 +106,10 @@ public class Empresa implements Serializable {
 		losproyectos.add(proyecto);
 	}
 	
+	public void eliminarProyecto(Proyecto proyecto) {
+		losproyectos.remove(proyecto);
+	}
+	
 	public void modificarProyecto(String idProyecto, Proyecto nuevoProyecto) {
 	    for (Proyecto proyecto : losproyectos) {
 	        if (proyecto.getId().equals(idProyecto)) {
@@ -272,5 +276,25 @@ public class Empresa implements Serializable {
 		
 		return aux;
 	}
+	
+	public int contarProyectosActivosCliente(Cliente cliente) {
+	    int cantidad = 0;
+	    for (Proyecto proyecto : cliente.getLosProyectos()) {
+	        if (proyecto.getEstado()) {
+	            cantidad++;
+	        }
+	    }
+	    return cantidad;
+	}
+	
+	public Contrato buscarContratoPorIdProyecto(String idProyecto) {
+	    for (Contrato contrato : loscontratos) { 
+	        if (contrato.getProyecto().getId().equals(idProyecto)) {
+	            return contrato; 
+	        }
+	    }
+	    return null; 
+	}
+
 
 }

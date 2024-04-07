@@ -447,33 +447,35 @@ public class RegistrarContrato extends JDialog {
     }
     
     protected Proyecto manejarProyecto() {
-		Proyecto proyecto = null;
-		
-    	ArrayList<Trabajador> trabajadores = new ArrayList<Trabajador>();
-    	
-    	if(comboBoxJefe.getSelectedItem() != null && comboBoxDisenador.getSelectedItem() != null &&  comboBoxPlanificador.getSelectedItem() != null && modelAsignados.size() >= 2 && modelAsignados.size() <= 3) {
-	    	for(int i = 0; i < modelAsignados.getSize(); i++) {
-	    		trabajadores.add(modelAsignados.getElementAt(i));
-	    	}
-	    	trabajadores.add((JefeProyecto) comboBoxJefe.getSelectedItem());
-	    	trabajadores.add((Disenador) comboBoxDisenador.getSelectedItem());
-	    	trabajadores.add((Planificador) comboBoxPlanificador.getSelectedItem());
-	    	
-	    	if(!txtNomPro.getText().isEmpty()) {
-		    	proyecto = new Proyecto(txtIdProyecto.getText(), txtNomPro.getText(), trabajadores);
-		    	Empresa.getInstance().registarProyecto(proyecto);
-		    	((JefeProyecto) comboBoxJefe.getSelectedItem()).setCantTrabajadores(trabajadores.size()-1);
-		    	
-	    	} else {
-	    		JOptionPane.showMessageDialog(null, "Necesita llenar el nombre del proyecto", "Error", JOptionPane.ERROR_MESSAGE);
-	    	}
-    	
-    	} else {
-    		JOptionPane.showMessageDialog(null, "Verifique la selección de empleados", "Error", JOptionPane.ERROR_MESSAGE);
-    	}
-    	
-		return proyecto;
-	}
+        Proyecto proyecto = null;
+        
+        ArrayList<Trabajador> trabajadores = new ArrayList<Trabajador>();
+        
+        if(comboBoxJefe.getSelectedItem() != null && comboBoxDisenador.getSelectedItem() != null &&  comboBoxPlanificador.getSelectedItem() != null && modelAsignados.size() >= 2 && modelAsignados.size() <= 3) {
+            for(int i = 0; i < modelAsignados.getSize(); i++) {
+                trabajadores.add(modelAsignados.getElementAt(i));
+            }
+            trabajadores.add((JefeProyecto) comboBoxJefe.getSelectedItem());
+            trabajadores.add((Disenador) comboBoxDisenador.getSelectedItem());
+            trabajadores.add((Planificador) comboBoxPlanificador.getSelectedItem());
+            
+            if(!txtNomPro.getText().isEmpty()) {
+                proyecto = new Proyecto(txtIdProyecto.getText(), txtNomPro.getText(), trabajadores);
+                proyecto.setEstado(true); // Establecer el estado del proyecto como activo
+                Empresa.getInstance().registarProyecto(proyecto);
+                ((JefeProyecto) comboBoxJefe.getSelectedItem()).setCantTrabajadores(trabajadores.size()-1);
+                
+            } else {
+                JOptionPane.showMessageDialog(null, "Necesita llenar el nombre del proyecto", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        
+        } else {
+            JOptionPane.showMessageDialog(null, "Verifique la selección de empleados", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        
+        return proyecto;
+    }
+
 
 	protected void manejarCliente() {
 		if(client != null) {
@@ -511,33 +513,58 @@ public class RegistrarContrato extends JDialog {
         }
     }
     
-    private void fillProgramadoresList() {
-    	modelAsignados.clear();
-    	modelDisp.clear();
-        ArrayList<Programador> trabajadores = Empresa.getInstance().getProgramadoresDisponibles();
-        System.out.println(trabajadores.size());
-        for (Trabajador trabajador : trabajadores) {
-           modelDisp.addElement((Programador) trabajador);
-        }
-        
-        listProgramadoresDisp.setModel(modelDisp); // Aquí se asigna el modelo a la lista de programadores disponibles
-        listProgramadoresAsignados.setModel(modelAsignados); // Aquí se asigna el modelo a la lista de programadores disponibles
-    }
+	private void fillProgramadoresList() {
+	    modelAsignados.clear();
+	    modelDisp.clear();
+	    
+	    ArrayList<Programador> programadoresDisponibles = new ArrayList<>();
+	    
+	    ArrayList<Programador> todosLosProgramadores = Empresa.getInstance().getProgramadoresDisponibles();
+	    
+	    for (Programador programador : todosLosProgramadores) {
+	        boolean estaEnProyectoActivo = false;
+	        
+	        for (Proyecto proyecto : Empresa.getInstance().getLosproyectos()) {
+	            if (proyecto.getLosTrabajadores().contains(programador) && proyecto.getEstado()) {
+	                estaEnProyectoActivo = true;
+	                break;
+	            }
+	        }
+	        
+	        if (!estaEnProyectoActivo) {
+	            programadoresDisponibles.add(programador);
+	        }
+	    }
+	    
+	    for (Programador programador : programadoresDisponibles) {
+	        modelDisp.addElement(programador);
+	    }
+	    
+	    listProgramadoresDisp.setModel(modelDisp);
+	    listProgramadoresAsignados.setModel(modelAsignados);
+	}
+
    
 
     
     private void buscarCliente(String id) {
         Cliente aux = null;
-        if(!id.isEmpty()) {
+        if (!id.isEmpty()) {
             aux = Empresa.getInstance().buscarClienteByIdentificador(id);
             
-            if(aux != null) {
+            if (aux != null) {
+                int proyectosActivos = Empresa.getInstance().contarProyectosActivosCliente(aux);
+                if (proyectosActivos >= 5) {
+                    JOptionPane.showMessageDialog(null, "El cliente ya tiene 5 proyectos activos", "Error", JOptionPane.ERROR_MESSAGE);
+                    return; 
+                }
+                
                 txtNombre.setText(aux.getNombre());
                 txtDireccion.setText(aux.getDireccion());
                 txtIdCliente.setText(aux.getId());
                 client = aux;
             } else {
-                txtIdCliente.setText(new String("C-"+Empresa.getInstance().idClientes));
+                txtIdCliente.setText(new String("C-" + Empresa.getInstance().idClientes));
                 txtNombre.setText("");
                 txtDireccion.setText("");
             }
@@ -546,6 +573,7 @@ public class RegistrarContrato extends JDialog {
             txtDireccion.setEnabled(true);
         }
     }
+
     
     private void clearContract() {
         txtDireccion.setText("");
@@ -587,4 +615,6 @@ public class RegistrarContrato extends JDialog {
 		
 		txtFechaEstimada.setText(dateFormat.format(fecha));
     }
+    
+    
 }
