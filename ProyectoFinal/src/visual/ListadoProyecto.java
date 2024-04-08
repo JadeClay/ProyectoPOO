@@ -18,6 +18,7 @@ import javax.swing.table.DefaultTableModel;
 import logico.Contrato;
 import logico.Empresa;
 import logico.Proyecto;
+import logico.Trabajador;
 
 public class ListadoProyecto extends JDialog {
 
@@ -115,7 +116,10 @@ public class ListadoProyecto extends JDialog {
                 	        if (choice == 0) { // Finalizar
                 	            Contrato contrato = Empresa.getInstance().buscarContratoPorIdProyecto(selected.getId());
                 	            if (contrato != null) {
-                	                contrato.setProrrogado(false); // Cambiar el estado del contrato
+                	                contrato.setProrrogado(false); 
+                	                for (Trabajador trabajador : selected.getLosTrabajadores()) {
+                	                    trabajador.actualizarHistorial(0, false); 
+                	                }
                 	            }
                 	            Empresa.getInstance().eliminarProyecto(selected);
                 	            loadProyectos();
@@ -126,6 +130,10 @@ public class ListadoProyecto extends JDialog {
                 	                Contrato contrato = Empresa.getInstance().buscarContratoPorIdProyecto(selected.getId());
                 	                if (contrato != null) {
                 	                    contrato.prorrogarProyecto(hoursToExtend); // Llamar al método prorrogarProyecto en el contrato asociado al proyecto seleccionado
+                	                    // Obtener los trabajadores asociados al proyecto y actualizar su historial de puntuación
+                	                    for (Trabajador trabajador : selected.getLosTrabajadores()) {
+                	                        trabajador.actualizarHistorial(hoursToExtend, true); 
+                	                    }
                 	                }
                 	            }
                 	        }
