@@ -11,10 +11,12 @@ public class Empresa implements Serializable {
 	private ArrayList<Cliente> misclientes;
 	private ArrayList<Proyecto> losproyectos;
 	private ArrayList<Contrato> loscontratos;
+	private ArrayList<Usuario> losusuarios;
 	public static int idTrabajadores;
 	public static int idContratos;
 	public static int idProyectos;
 	public static int idClientes;
+	public static int idUsuarios;
 	public static Empresa empresa;
 	
 	public Empresa() {
@@ -23,10 +25,12 @@ public class Empresa implements Serializable {
 		this.misclientes = new ArrayList<Cliente>();
 		this.losproyectos = new ArrayList<Proyecto>();
 		this.loscontratos = new ArrayList<Contrato>();
+		this.losusuarios = new ArrayList<Usuario>();
 		idClientes = 1;
 		idContratos = 1;
 		idProyectos = 1;
 		idTrabajadores = 1;
+		idUsuarios = 1;
 	}
 
 	public static Empresa getInstance(){
@@ -42,8 +46,17 @@ public class Empresa implements Serializable {
 		empresa.recuperarUltimoIdContrato();
 		empresa.recuperarUltimoIdProyecto();
 		empresa.recuperarUltimoIdTrabajador();
+		empresa.recuperarUltimoIdUsuario();
 	}
 	
+	public ArrayList<Usuario> getLosusuarios() {
+		return losusuarios;
+	}
+
+	public void setLosusuarios(ArrayList<Usuario> losusuarios) {
+		this.losusuarios = losusuarios;
+	}
+
 	public ArrayList<Trabajador> getMistabajadores() {
 		return mistrabajadores;
 	}
@@ -137,6 +150,17 @@ public class Empresa implements Serializable {
 			idTrabajadores = new Integer(aux.getId().substring(2)) + 1;
 		} else {
 			idTrabajadores = 1;
+		}
+	}
+	
+	private void recuperarUltimoIdUsuario() {
+		Usuario aux = null;
+		if(losusuarios.size() != 0) {
+			aux = losusuarios.get(losusuarios.size()-1);
+			
+			idUsuarios = new Integer(aux.getId().substring(2)) + 1;
+		} else {
+			idUsuarios = 1;
 		}
 	}
 	
@@ -296,5 +320,46 @@ public class Empresa implements Serializable {
 	    return null; 
 	}
 
+	public void regUser(Usuario aux) {
+		idUsuarios++;
+		losusuarios.add(aux);
+	}
+
+	public Usuario confirmLogin(String usuario, String password) {
+		Usuario aux = null;
+		boolean encontrado = false;
+		int i = 0;
+		
+		while(i < losusuarios.size() && !encontrado) {
+			if(losusuarios.get(i).getUsuario().equalsIgnoreCase(usuario) && losusuarios.get(i).getPassword().equalsIgnoreCase(password)) {
+				encontrado = true;
+				aux = losusuarios.get(i);
+			}
+			i++;
+		}
+		
+		return aux;
+	}
+
+	public Usuario buscarUsuarioById(String id) {
+		Usuario aux = null;
+		boolean encontrado = false;
+		
+		int i=0;
+		while(!encontrado && i<losusuarios.size()) {
+			if(losusuarios.get(i).getId().equalsIgnoreCase(id)) {
+				aux = losusuarios.get(i);
+				encontrado = true;
+			}
+			i++;
+		}
+		
+		
+		return aux;
+	}
+
+	public void eliminarUsuario(Usuario usuario) {
+		losusuarios.remove(usuario);
+	}
 
 }

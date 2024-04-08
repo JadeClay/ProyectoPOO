@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import logico.Empresa;
+import logico.Usuario;
 
 import javax.swing.JLabel;
 import java.awt.event.ActionListener;
@@ -23,6 +24,8 @@ import javax.swing.JMenu;
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
+import java.awt.Color;
+import java.awt.Font;
 
 public class Principal extends JFrame {
 
@@ -31,72 +34,9 @@ public class Principal extends JFrame {
 	private JMenuItem mntmListadoClientes;
 
 	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				FileInputStream empresa;
-				FileOutputStream empresa2;
-				ObjectInputStream empresaRead;
-				ObjectOutputStream empresaWrite;
-				try {
-					empresa = new FileInputStream ("empresa.dat");
-					empresaRead = new ObjectInputStream(empresa);
-					Empresa temp = (Empresa)empresaRead.readObject();
-					Empresa.setEmpresa(temp);
-					empresa.close();
-					empresaRead.close();
-				} catch (FileNotFoundException e) {
-					try {
-						empresa2 = new  FileOutputStream("empresa.dat");
-						empresaWrite = new ObjectOutputStream(empresa2);
-						//User aux = new User("Administrador", "Admin", "Admin");
-						//Empresa.getInstance().regUser(aux);
-						empresaWrite.writeObject(Empresa.getInstance());
-						empresa2.close();
-						empresaWrite.close();
-					} catch (FileNotFoundException e1) {
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-					}
-				} catch (IOException | ClassNotFoundException e) {
-					e.printStackTrace();
-					
-				} 
-				
-				try {
-					Principal frame = new Principal();
-					frame.addWindowListener(new java.awt.event.WindowAdapter() {
-					    @Override
-					    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-							FileOutputStream empresa2;
-							ObjectOutputStream empresaWrite;
-							try {
-								empresa2 = new  FileOutputStream("empresa.dat");
-								empresaWrite = new ObjectOutputStream(empresa2);
-								empresaWrite.writeObject(Empresa.getInstance());
-							} catch (FileNotFoundException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							} catch (IOException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
-					    }
-					});
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
 	 * Create the frame.
 	 */
-	public Principal() {
+	public Principal(Usuario aux) {
 		setResizable(false);
 		setTitle("Gestion de Software Empresarial");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -189,10 +129,56 @@ public class Principal extends JFrame {
 		});
 		mnProyectos.add(mntmNewMenuItem);
 		
+		JMenu mnAdministracion = new JMenu("Administraci\u00F3n");
+		if(aux.getTipo() == 0) {
+			mnAdministracion.setEnabled(false);
+		}
+		menuBar.add(mnAdministracion);
+		
+		JMenuItem mntmCrearUsuario = new JMenuItem("Registrar usuario");
+		mntmCrearUsuario.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CrearUsuario ventana = new CrearUsuario();
+				ventana.setVisible(true);
+			}
+		});
+		mnAdministracion.add(mntmCrearUsuario);
+		
+		JSeparator separator_3 = new JSeparator();
+		mnAdministracion.add(separator_3);
+		
+		JMenuItem mntmListadoUsuarios = new JMenuItem("Listado");
+		mntmListadoUsuarios.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ListadoUsuarios ventana = new ListadoUsuarios();
+				ventana.setVisible(true);
+			}
+		});
+		mnAdministracion.add(mntmListadoUsuarios);
+		
 		JPanel backgroundPanel = new JPanel();
 		backgroundPanel.setBounds(0, 23, 797, 562);
 		panel_1.add(backgroundPanel);
 		backgroundPanel.setLayout(null);
+		
+		JPanel panel = new JPanel();
+		panel.setBackground(Color.WHITE);
+		panel.setBounds(588, 0, 209, 71);
+		backgroundPanel.add(panel);
+		panel.setLayout(null);
+		
+		JLabel lblNewLabel = new JLabel("Bienvenido,");
+		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 20));
+		lblNewLabel.setBounds(12, 13, 136, 31);
+		panel.add(lblNewLabel);
+		
+		JLabel lblNombre = new JLabel("usuario.");
+		if(aux != null) {
+			lblNombre.setText(aux.getUsuario() + ".");
+		}
+		lblNombre.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		lblNombre.setBounds(12, 39, 185, 16);
+		panel.add(lblNombre);
 		
 		JLabel lblBackground = new JLabel("");
 		lblBackground.setIcon(new ImageIcon(Principal.class.getResource("/visual/img/background.jpg")));
