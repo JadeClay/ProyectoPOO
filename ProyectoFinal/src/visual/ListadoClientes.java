@@ -2,7 +2,9 @@ package visual;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Image;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -33,7 +35,7 @@ public class ListadoClientes extends JDialog {
 	private static DefaultTableModel model;
 	private static Object[] rows;
 	private Cliente client = null;
-	private JButton btnNewButton;
+	private JButton btnPerfil;
 	/**
 	 * Launch the application.
 	 */
@@ -90,7 +92,7 @@ public class ListadoClientes extends JDialog {
 							if(index > -1){
 								btnEliminar.setEnabled(true);
 								btnModificar.setEnabled(true);
-
+								btnPerfil.setEnabled(true);
 								if (client == null) {
 									
 									client = Empresa.getInstance().buscarClienteById((table.getValueAt(index, 0).toString()));
@@ -112,21 +114,26 @@ public class ListadoClientes extends JDialog {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				btnEliminar = new JButton("Eliminar");
+				btnEliminar.setEnabled(false);
 				btnEliminar.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
+						if(client != null) {
 						Empresa.getInstance().eliminarCliente(client);
 						loadClients();
+						}
 					}
 				});
 				buttonPane.add(btnEliminar);
 			}
 			{
 				btnModificar = new JButton("Modificar");
+				btnModificar.setEnabled(false);
 				btnModificar.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
+						if(client != null) {
 						RegistrarCliente modifCli = new RegistrarCliente(client);
 						modifCli.setVisible(true);
-						
+						}
 					}
 				});
 				buttonPane.add(btnModificar);
@@ -139,20 +146,25 @@ public class ListadoClientes extends JDialog {
 					}
 				});
 				{
-					btnNewButton = new JButton("Ver Perfil");
-					btnNewButton.addActionListener(new ActionListener() {
+					btnPerfil = new JButton("Ver Perfil");
+					btnPerfil.setEnabled(false);
+					btnPerfil.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
+							if(client != null) {
 							PerfilCliente perCli = new PerfilCliente(client);
 							perCli.setVisible(true);
+							}
 						}
 					});
-					buttonPane.add(btnNewButton);
+					buttonPane.add(btnPerfil);
 				}
 				btnSalir.setActionCommand("Cancel");
 				buttonPane.add(btnSalir);
 			}
 		}
 		loadClients();
+		Image img = new ImageIcon(this.getClass().getResource("/visual/img//clientico.png")).getImage();
+		this.setIconImage(img);
 	}
 
 	public static void loadClients() { 

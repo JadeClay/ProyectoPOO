@@ -2,6 +2,7 @@ package visual;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Image;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -31,6 +32,7 @@ import javax.swing.AbstractListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 
 public class RegistrarTrabajador extends JDialog {
 
@@ -346,6 +348,8 @@ public class RegistrarTrabajador extends JDialog {
 			}
 		}
 		resetValues();
+		Image img = new ImageIcon(this.getClass().getResource("/visual/img//trabajador.png")).getImage();
+		this.setIconImage(img);
 	}
 	
 	private void resetValues() {

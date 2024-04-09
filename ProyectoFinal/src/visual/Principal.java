@@ -1,31 +1,28 @@
 package visual;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
+
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import logico.Empresa;
+
 import logico.Usuario;
 
 import javax.swing.JLabel;
 import java.awt.event.ActionListener;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.net.URL;
 import java.awt.event.ActionEvent;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Image;
 
 public class Principal extends JFrame {
 
@@ -181,7 +178,15 @@ public class Principal extends JFrame {
 		panel.add(lblNombre);
 		
 		JLabel lblBackground = new JLabel("");
-		lblBackground.setIcon(new ImageIcon(Principal.class.getResource("/visual/img/background.jpg")));
+		Image img = new ImageIcon(this.getClass().getResource("/visual/img/background.png")).getImage();
+		Image newImage = img.getScaledInstance(797, 563, Image.SCALE_DEFAULT);//w y h
+		lblBackground.setIcon(new ImageIcon(newImage));
+		
+		this.setIconImage(new ImageIcon(this.getClass().getResource("/visual/img/codeicon.png")).getImage());
+//		URL url = getClass().getResource("/visual/img/try3.gif");
+//	    Icon icon = new ImageIcon(url);
+//	    lblBackground.setIcon(icon);
+	    
 		lblBackground.setBounds(0, 0, 797, 563);
 		backgroundPanel.add(lblBackground);
 	}

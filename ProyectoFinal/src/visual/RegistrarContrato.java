@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -52,6 +53,8 @@ import java.awt.event.ItemEvent;
 import javax.swing.UIManager;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Image;
+
 import javax.swing.SwingConstants;
 import javax.swing.ListSelectionModel;
 
@@ -402,6 +405,7 @@ public class RegistrarContrato extends JDialog {
                     }
                 });
             }
+            
         }
         {
             JPanel buttonPane = new JPanel();
@@ -444,6 +448,8 @@ public class RegistrarContrato extends JDialog {
                 buttonPane.add(cancelButton);
             }
         }
+        Image img = new ImageIcon(this.getClass().getResource("/visual/img//contrato.png")).getImage();
+		this.setIconImage(img);
     }
     
     protected Proyecto manejarProyecto() {

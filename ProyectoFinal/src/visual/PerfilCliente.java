@@ -2,7 +2,9 @@ package visual;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Image;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -139,7 +141,8 @@ public class PerfilCliente extends JDialog {
 		}
 
 		loadEverything(client);
-
+		Image img = new ImageIcon(this.getClass().getResource("/visual/img//cliente.png")).getImage();
+		this.setIconImage(img);
 	}
 	private void loadEverything(Cliente client) {
 		ArrayList<String> dataProyectos = new ArrayList<>();

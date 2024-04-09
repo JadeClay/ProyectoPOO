@@ -2,8 +2,11 @@ package visual;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -174,6 +177,8 @@ public class ListadoProyecto extends JDialog {
         }
 
         loadProyectos();
+        Image img = new ImageIcon(this.getClass().getResource("/visual/img//teamwork.png")).getImage();
+		this.setIconImage(img);
     }
 
     public static void loadProyectos() {

@@ -90,12 +90,12 @@ public class Trabajador implements Serializable {
 			Proyecto p = c.getProyecto();
 			
 			if(!c.activo(new Date())) {
-				int i = 0;
+
 				for(Trabajador t : p.getLosTrabajadores()) {
 					if(t.getId().equalsIgnoreCase(id)) {
 						result++;
 					}
-					i++;
+
 				}
 			}
 		}

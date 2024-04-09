@@ -2,7 +2,9 @@ package visual;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Image;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -52,7 +54,7 @@ public class ListadoUsuarios extends JDialog {
 	public ListadoUsuarios() {
 		setResizable(false);
 		setModal(true);
-		setTitle("Listado De Clientes");
+		setTitle("Listado De Usuarios");
 		setBounds(100, 100, 580, 366);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -130,6 +132,8 @@ public class ListadoUsuarios extends JDialog {
 			}
 		}
 		loadUsuarios();
+		Image img = new ImageIcon(this.getClass().getResource("/visual/img//users.png")).getImage();
+		this.setIconImage(img);
 	}
 
 	public static void loadUsuarios() { 

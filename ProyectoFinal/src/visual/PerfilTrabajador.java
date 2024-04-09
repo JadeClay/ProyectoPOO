@@ -2,11 +2,13 @@ package visual;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -226,5 +228,8 @@ public class PerfilTrabajador extends JDialog {
 				getRootPane().setDefaultButton(okButton);
 			}
 		}
+		Image img = new ImageIcon(this.getClass().getResource("/visual/img//trabajador.png")).getImage();
+		this.setIconImage(img);
 	}
+
 }
