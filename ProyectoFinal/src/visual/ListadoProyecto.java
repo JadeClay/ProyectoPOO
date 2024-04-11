@@ -125,7 +125,7 @@ public class ListadoProyecto extends JDialog {
 	                	                }
                 	               }
                 	            }
-                	            Empresa.getInstance().eliminarProyecto(selected);
+                	            contrato.getProyecto().setEstado(false);
                 	            loadProyectos();
                 	        } else if (choice == 1) { // Prorrogar
                 	            String hours = JOptionPane.showInputDialog(null, "Ingrese la cantidad de horas a prorrogar:");
