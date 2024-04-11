@@ -141,7 +141,7 @@ public class PerfilCliente extends JDialog {
 		}
 
 		loadEverything(client);
-		Image img = new ImageIcon(this.getClass().getResource("/visual/img//cliente.png")).getImage();
+		Image img = new ImageIcon(this.getClass().getResource("/visual/img//client.png")).getImage();
 		this.setIconImage(img);
 	}
 	private void loadEverything(Cliente client) {
