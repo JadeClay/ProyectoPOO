@@ -119,10 +119,11 @@ public class ListadoProyecto extends JDialog {
                 	        if (choice == 0) { // Finalizar
                 	            Contrato contrato = Empresa.getInstance().buscarContratoPorIdProyecto(selected.getId());
                 	            if (contrato != null) {
-                	                contrato.setProrrogado(false); 
-                	                for (Trabajador trabajador : selected.getLosTrabajadores()) {
-                	                    trabajador.actualizarHistorial(0, false); 
-                	                }
+                	               if(!contrato.isProrrogado()) {
+	                	                for (Trabajador trabajador : selected.getLosTrabajadores()) {
+	                	                    trabajador.actualizarHistorial(0, false); 
+	                	                }
+                	               }
                 	            }
                 	            Empresa.getInstance().eliminarProyecto(selected);
                 	            loadProyectos();

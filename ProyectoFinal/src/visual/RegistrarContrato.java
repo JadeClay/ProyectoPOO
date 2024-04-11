@@ -425,6 +425,7 @@ public class RegistrarContrato extends JDialog {
 	                    	if(client != null) {
 		                        Contrato contrato = new Contrato(new String("CL-" + Empresa.getInstance().idContratos), client, proyecto, new Integer(spnHoras.getValue().toString()));
 		                        Empresa.getInstance().registrarContrato(contrato);
+		                        client.getLosProyectos().add(proyecto);
 		                        clearContract();
 		                        JOptionPane.showMessageDialog(null,"Registro Satisfactorio" ,"Información", JOptionPane.INFORMATION_MESSAGE);
 	                    	} else {
