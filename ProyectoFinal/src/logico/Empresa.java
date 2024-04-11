@@ -179,8 +179,8 @@ public class Empresa implements Serializable {
 		Contrato aux = null;
 		if(losproyectos.size() != 0) {
 			aux = loscontratos.get(loscontratos.size()-1);
-			
-			idContratos = new Integer(aux.getId().substring(2)) + 1;
+
+			idContratos = new Integer(aux.getId().substring(3)) + 1;
 		} else {
 			idContratos = 1;
 		}
