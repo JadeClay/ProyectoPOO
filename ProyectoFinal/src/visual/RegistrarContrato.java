@@ -588,6 +588,8 @@ public class RegistrarContrato extends JDialog {
         txtNombre.setText("");
         txtIdProyecto.setText("P-"+Empresa.getInstance().idProyectos);
         txtNomPro.setText("");
+        txtIdentificacion.setText("");
+        spnHoras.setValue(new Float(1));
         fillProgramadoresList();
         fillComboBoxes();
     }

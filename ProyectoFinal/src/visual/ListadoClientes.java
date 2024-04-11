@@ -93,11 +93,9 @@ public class ListadoClientes extends JDialog {
 								btnEliminar.setEnabled(true);
 								btnModificar.setEnabled(true);
 								btnPerfil.setEnabled(true);
-								if (client == null) {
-									
-									client = Empresa.getInstance().buscarClienteById((table.getValueAt(index, 0).toString()));
-									
-								}
+							
+								client = Empresa.getInstance().buscarClienteById((table.getValueAt(index, 0).toString()));
+
 								
 							}
 						}
