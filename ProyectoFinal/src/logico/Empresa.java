@@ -12,6 +12,7 @@ public class Empresa implements Serializable {
 	private ArrayList<Proyecto> losproyectos;
 	private ArrayList<Contrato> loscontratos;
 	private ArrayList<Usuario> losusuarios;
+	public static Database database;
 	public static int idTrabajadores;
 	public static int idContratos;
 	public static int idProyectos;
@@ -31,6 +32,7 @@ public class Empresa implements Serializable {
 		idProyectos = 1;
 		idTrabajadores = 1;
 		idUsuarios = 1;
+		database = new Database();
 	}
 
 	public static Empresa getInstance(){
@@ -40,6 +42,7 @@ public class Empresa implements Serializable {
 		return empresa;
 	}
 	
+	// LEGACY: HAY QUE CAMBIAR ESTO CUANDO SE TERMINE DE HACER LA TRANSCISIÓN A LA BASE DE DATOS
 	public static void setEmpresa(Empresa temp) {
 		empresa = temp;
 		empresa.recuperarUltimoIdCliente();
@@ -47,6 +50,11 @@ public class Empresa implements Serializable {
 		empresa.recuperarUltimoIdProyecto();
 		empresa.recuperarUltimoIdTrabajador();
 		empresa.recuperarUltimoIdUsuario();
+	}
+	
+	public static void loadData() {
+		Database database = new Database();
+		empresa.setLosusuarios(database.getAllUsers());
 	}
 	
 	public ArrayList<Usuario> getLosusuarios() {

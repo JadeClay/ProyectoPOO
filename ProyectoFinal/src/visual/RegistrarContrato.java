@@ -458,7 +458,7 @@ public class RegistrarContrato extends JDialog {
         
         ArrayList<Trabajador> trabajadores = new ArrayList<Trabajador>();
         
-        if(comboBoxJefe.getSelectedItem() != null && comboBoxDisenador.getSelectedItem() != null &&  comboBoxPlanificador.getSelectedItem() != null && modelAsignados.size() >= 2 && modelAsignados.size() <= 3) {
+        if(comboBoxJefe.getSelectedItem() != null && comboBoxDisenador.getSelectedItem() != null &&  comboBoxPlanificador.getSelectedItem() != null && modelAsignados.size() >= 1 && modelAsignados.size() <= 2) {
             for(int i = 0; i < modelAsignados.getSize(); i++) {
                 trabajadores.add(modelAsignados.getElementAt(i));
             }
@@ -589,7 +589,7 @@ public class RegistrarContrato extends JDialog {
         txtIdProyecto.setText("P-"+Empresa.getInstance().idProyectos);
         txtNomPro.setText("");
         txtIdentificacion.setText("");
-        spnHoras.setValue(new Float(1));
+        spnHoras.setValue(new Integer(1));
         fillProgramadoresList();
         fillComboBoxes();
     }

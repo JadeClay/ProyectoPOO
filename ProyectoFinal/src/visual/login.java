@@ -8,13 +8,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-
-
+import logico.Database;
 import logico.Empresa;
 import logico.Usuario;
 
@@ -35,6 +38,7 @@ public class login extends JFrame {
 	private JPasswordField txtPassword;
 	private JLabel lbllockimg;
 
+
 	/**
 	 * Launch the application.
 	 */
@@ -49,7 +53,11 @@ public class login extends JFrame {
 					empresa = new FileInputStream ("empresa.dat");
 					empresaRead = new ObjectInputStream(empresa);
 					Empresa temp = (Empresa)empresaRead.readObject();
+					
+					// El método setEmpresa es el que carga el fichero, esto hay que cambiarlo y dejar simplemente el loadData, que será el que cargue toda la info existente de la base de datos.
 					Empresa.setEmpresa(temp);
+					Empresa.loadData();
+					
 					empresa.close();
 					empresaRead.close();
 				} catch (FileNotFoundException e) {
@@ -114,7 +122,10 @@ public class login extends JFrame {
 		JButton btnLogin = new JButton("Login");
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Usuario aux = Empresa.getInstance().confirmLogin(txtUsuario.getText(), new String(txtPassword.getPassword()));
+				Database database = new Database();
+				Usuario aux = null;
+				aux = database.logUser(txtUsuario.getText(), new String(txtPassword.getPassword()));
+
 				if(aux != null){
 					Principal frame = new Principal(aux);
 					frame.addWindowListener(new java.awt.event.WindowAdapter() {
