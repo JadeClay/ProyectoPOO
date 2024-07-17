@@ -21,7 +21,12 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 import logico.Trabajador;
+import logico.Database;
+import logico.Disenador;
 import logico.Empresa;
+import logico.JefeProyecto;
+import logico.Planificador;
+import logico.Programador;
 
 public class ListadoTrabajadores extends JDialog {
 	
@@ -110,7 +115,20 @@ public class ListadoTrabajadores extends JDialog {
 						if(selected != null){
 							int option = JOptionPane.showConfirmDialog(null, "Seguro desea eliminar el trabajador con código: "+ selected.getId(), "Eliminar", JOptionPane.WARNING_MESSAGE);
 							if(option == JOptionPane.YES_OPTION){
+								Database database = new Database();
+								
+								if(selected instanceof JefeProyecto) {
+									database.deleteJefeProyecto(new Integer(selected.getId().substring(2)));
+								} else if (selected instanceof Programador) {
+									database.deleteProgramador(new Integer(selected.getId().substring(2)));
+								} else if(selected instanceof Planificador) {
+									database.deletePlanificador(new Integer(selected.getId().substring(2)));
+								} else {
+									database.deleteWorker(new Integer(selected.getId().substring(2)));
+								}
+								
 								Empresa.getInstance().eliminarTrabajador(selected);
+								
 								loadClientes();
 							}
 						}

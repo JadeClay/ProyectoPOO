@@ -56,19 +56,26 @@ public class Trabajador implements Serializable {
 		String result = "";
 		int ultimaEvaluacion = historialPuntuacion.size()-1;
 		
-		if(historialPuntuacion.get(ultimaEvaluacion) > 90) {
-			result = "Destacado";
-		} else if(historialPuntuacion.get(ultimaEvaluacion) > 70) {
-			result = "Cumplidor";
-		} else {
-			result = "Incumplidor";
+		if(ultimaEvaluacion >= 0) {
+			if(historialPuntuacion.get(ultimaEvaluacion) > 90) {
+				result = "Destacado";
+			} else if(historialPuntuacion.get(ultimaEvaluacion) > 70) {
+				result = "Cumplidor";
+			} else {
+				result = "Incumplidor";
+			}
 		}
 		
 		return result;
 	}
+	public void setHistorialPuntuacion(ArrayList<Integer> historial) {
+		this.historialPuntuacion = historial;
+	}
+	
 	public ArrayList<Integer> getHistorialPuntuacion() {
 		return historialPuntuacion;
 	}
+	
 	public void actualizarHistorial(int cantHoras, boolean atraso) {
 		int puntosAModificar = cantHoras/100;
 		int indiceHistActual = historialPuntuacion.size()-1;
@@ -77,6 +84,7 @@ public class Trabajador implements Serializable {
 		// Si se actualiza el historial por un atraso
 		if(atraso) {
 			historialPuntuacion.add(historialActual - puntosAModificar);
+			
 		} else if((historialActual + puntosAModificar) <= 100) { // Si se actualiza el historial por terminar el proyecto antes
 			historialPuntuacion.add(historialActual + puntosAModificar);
 		}
@@ -111,10 +119,10 @@ public class Trabajador implements Serializable {
 			return "Planificador";
 		}else if (t instanceof JefeProyecto) {
 			return "JefeProyecto";
-		}else if (t instanceof Disenador) {
-			return "Diseñador   ";
+		}else {
+			return "Diseñador";
 		}
-		return null;
+		
 	}
 	
 }

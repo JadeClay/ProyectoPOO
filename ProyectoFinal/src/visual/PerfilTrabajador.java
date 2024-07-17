@@ -207,11 +207,10 @@ public class PerfilTrabajador extends JDialog {
 			lblExtra.setText("Empleados a cargo:");
 			txtExtra.setText(new String("" + ((JefeProyecto) trabajador).getCantTrabajadores()));
 		} else {
-			lblExtra.setText("Años de Experiencia:");
-			txtExtra.setText(new String("" + ((Disenador) trabajador).getAniosExp()));
+			lblExtra.setVisible(false);
+			txtExtra.setVisible(false);
 		}
 		
-
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));

@@ -15,6 +15,7 @@ import javax.swing.border.TitledBorder;
 import com.sun.security.ntlm.Client;
 
 import logico.Cliente;
+import logico.Database;
 import logico.Empresa;
 import logico.Proyecto;
 import sun.util.locale.provider.AuxLocaleProviderAdapter;
@@ -179,7 +180,11 @@ public class RegistrarCliente extends JDialog {
 			Cliente client = new Cliente(txtId.getText(),txtIdentificacion.getText(), txtNombre.getText(), txtDireccion.getText());
 			Empresa.getInstance().getMisclientes().add(client);
 			Empresa.idClientes++;
+			
+			Database database = new Database();
+			database.addClient(client.getIdentificacion(), client.getNombre(), client.getDireccion());
 			clearRegistro();
+			
 			JOptionPane.showMessageDialog(null,"Registro Satisfactorio" ,"Información", JOptionPane.INFORMATION_MESSAGE);
 		} else {
 			JOptionPane.showMessageDialog(null,"Hubo un error al registrar el cliente" ,"Error", JOptionPane.ERROR_MESSAGE);

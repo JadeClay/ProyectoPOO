@@ -45,8 +45,8 @@ public class Empresa implements Serializable {
 	// LEGACY: HAY QUE CAMBIAR ESTO CUANDO SE TERMINE DE HACER LA TRANSCISIÓN A LA BASE DE DATOS
 	public static void setEmpresa(Empresa temp) {
 		empresa = temp;
-		empresa.recuperarUltimoIdCliente();
-		empresa.recuperarUltimoIdContrato();
+		//empresa.recuperarUltimoIdCliente();
+		//empresa.recuperarUltimoIdContrato();
 		empresa.recuperarUltimoIdProyecto();
 		empresa.recuperarUltimoIdTrabajador();
 		empresa.recuperarUltimoIdUsuario();
@@ -55,6 +55,14 @@ public class Empresa implements Serializable {
 	public static void loadData() {
 		Database database = new Database();
 		empresa.setLosusuarios(database.getAllUsers());
+		empresa.setMisclientes(database.getAllClients());
+		empresa.setMistabajadores(database.getAllWorkers());
+		
+		empresa.recuperarUltimoIdCliente();
+		empresa.recuperarUltimoIdContrato();
+		empresa.recuperarUltimoIdProyecto();
+		empresa.recuperarUltimoIdTrabajador();
+		empresa.recuperarUltimoIdUsuario();
 	}
 	
 	public ArrayList<Usuario> getLosusuarios() {
@@ -177,7 +185,7 @@ public class Empresa implements Serializable {
 		if(misclientes.size() != 0) {
 			aux = misclientes.get(misclientes.size()-1);
 			
-			idClientes = new Integer(aux.getId().substring(2)) + 1;
+			idClientes = new Integer(aux.getId().substring(3)) + 1;
 		} else {
 			idClientes = 1;
 		}
@@ -188,7 +196,7 @@ public class Empresa implements Serializable {
 		if(losproyectos.size() != 0) {
 			aux = loscontratos.get(loscontratos.size()-1);
 
-			idContratos = new Integer(aux.getId().substring(3)) + 1;
+			idContratos = new Integer(aux.getId().substring(2)) + 1;
 		} else {
 			idContratos = 1;
 		}
@@ -273,12 +281,12 @@ public class Empresa implements Serializable {
 		return aux;
 	}
 
-	public ArrayList<Disenador> getDisenadoresDisponibles() {
-		ArrayList<Disenador> aux = new ArrayList<Disenador>();
+	public ArrayList<Trabajador> getDisenadoresDisponibles() {
+		ArrayList<Trabajador> aux = new ArrayList<Trabajador>();
 		
 		for(Trabajador t : mistrabajadores) {
-			if(t instanceof Disenador && t.getCantDeProyectosAsignados() < 2) {
-				aux.add((Disenador) t);
+			if(!(t instanceof JefeProyecto) && !(t instanceof Planificador) && !(t instanceof Programador) && t.getCantDeProyectosAsignados() < 2) {
+				aux.add(t);
 			}
 		}
 		

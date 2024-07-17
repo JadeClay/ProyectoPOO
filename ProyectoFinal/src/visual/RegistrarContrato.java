@@ -76,7 +76,7 @@ public class RegistrarContrato extends JDialog {
     private JList<Programador> listProgramadoresDisp;
     private JList<Programador> listProgramadoresAsignados;
     private JComboBox<JefeProyecto> comboBoxJefe;
-    private JComboBox<Disenador> comboBoxDisenador;
+    private JComboBox<Trabajador> comboBoxDisenador;
     private JComboBox<Planificador> comboBoxPlanificador;
     private DefaultListModel<Programador> modelAsignados = new DefaultListModel<>();
     private DefaultListModel<Programador> modelDisp = new DefaultListModel<>();
@@ -126,7 +126,7 @@ public class RegistrarContrato extends JDialog {
                 txtIdCliente = new JTextField();
                 txtIdCliente.setEditable(false);
 
-                txtIdCliente.setText("C-");
+                txtIdCliente.setText("CL-");
                 txtIdCliente.setColumns(10);
                 txtIdCliente.setBounds(47, 19, 109, 20);
                 panel_CLient.add(txtIdCliente);
@@ -322,7 +322,7 @@ public class RegistrarContrato extends JDialog {
                     	if(value == null) {
 	                    	value = "Seleccionar";
                     	} else {
-                    		Disenador aux = (Disenador) value;
+                    		Trabajador aux = (Trabajador) value;
 	                    	value = aux.getNombre() + " " + aux.getApellidos() + " - " + aux.getEvaluacionActual(); 
                     	}
                     	
@@ -463,7 +463,7 @@ public class RegistrarContrato extends JDialog {
                 trabajadores.add(modelAsignados.getElementAt(i));
             }
             trabajadores.add((JefeProyecto) comboBoxJefe.getSelectedItem());
-            trabajadores.add((Disenador) comboBoxDisenador.getSelectedItem());
+            trabajadores.add((Trabajador) comboBoxDisenador.getSelectedItem());
             trabajadores.add((Planificador) comboBoxPlanificador.getSelectedItem());
             
             if(!txtNomPro.getText().isEmpty()) {
@@ -506,12 +506,11 @@ public class RegistrarContrato extends JDialog {
     	comboBoxDisenador.addItem(null);
     	comboBoxPlanificador.addItem(null);
     	
-    	
         for (JefeProyecto j : Empresa.getInstance().getJefeProyectosDisponibles()) {
         	comboBoxJefe.addItem(j);
         }
 
-        for (Disenador d : Empresa.getInstance().getDisenadoresDisponibles()) {
+        for (Trabajador d : Empresa.getInstance().getDisenadoresDisponibles()) {
         	comboBoxDisenador.addItem(d);
         }
 

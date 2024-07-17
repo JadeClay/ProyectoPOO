@@ -12,6 +12,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import logico.Database;
 import logico.Empresa;
 import logico.Usuario;
 
@@ -120,6 +121,9 @@ public class CrearUsuario extends JDialog {
 						}
 						Usuario nuevoUsuario = new Usuario(new String("U-" + Empresa.getInstance().idUsuarios), txtUsuario.getText(), new String(txtPassword.getPassword()), tipo);
 						Empresa.getInstance().regUser(nuevoUsuario);
+						Database database = new Database();
+						database.registerUser(nuevoUsuario.getUsuario(), nuevoUsuario.getPassword(), nuevoUsuario.getTipo());
+						
 						JOptionPane.showMessageDialog(null, "El usuario ha sido creado con éxito", "Información", JOptionPane.INFORMATION_MESSAGE);
 					} else {
 						JOptionPane.showMessageDialog(null, "Ya hay un usuario con ese nombre", "Error", JOptionPane.ERROR_MESSAGE);

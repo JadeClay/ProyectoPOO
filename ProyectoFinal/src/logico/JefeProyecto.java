@@ -7,8 +7,11 @@ public class JefeProyecto extends Trabajador implements Serializable {
 	private int cantTrabajadores;
 	
 	public JefeProyecto(String id, String identificacion, String nombre, String apellidos, String direccion,
-			String sexo, int edad, float salario) {
+			String sexo, int edad, float salario, int cantTrabajadores) {
 		super(id, identificacion, nombre, apellidos, direccion, sexo, edad, salario);
+		
+		this.cantTrabajadores = cantTrabajadores;
+		
 		// TODO Auto-generated constructor stub
 	}
 	

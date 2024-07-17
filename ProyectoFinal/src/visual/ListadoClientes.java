@@ -13,6 +13,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 import logico.Cliente;
+import logico.Database;
 import logico.Empresa;
 
 import javax.swing.JScrollPane;
@@ -116,8 +117,12 @@ public class ListadoClientes extends JDialog {
 				btnEliminar.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						if(client != null) {
-						Empresa.getInstance().eliminarCliente(client);
-						loadClients();
+							Empresa.getInstance().eliminarCliente(client);
+							Database database = new Database();
+							
+							database.deleteClient(new Integer(client.getId().substring(2)));
+							
+							loadClients();
 						}
 					}
 				});

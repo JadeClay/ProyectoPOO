@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
+import logico.Database;
 import logico.Disenador;
 import logico.Empresa;
 import logico.JefeProyecto;
@@ -42,8 +43,6 @@ public class RegistrarTrabajador extends JDialog {
 	private JRadioButton rbtnDisenador;
 	private JRadioButton rbtnProgramador;
 	private JRadioButton rbtnPlanificador;
-	private JPanel pnlDisenador;
-	private JSpinner spnAnios;
 	private JPanel pnlProgramador;
 	private JPanel panel_2;
 	private JPanel pnlPlanificador;
@@ -163,7 +162,7 @@ public class RegistrarTrabajador extends JDialog {
 			panel_1.add(txtIdentificacion);
 			
 			cbxSexo = new JComboBox();
-			cbxSexo.setModel(new DefaultComboBoxModel(new String[] {"Seleccionar...", "Femenino", "Masculino", "No binario"}));
+			cbxSexo.setModel(new DefaultComboBoxModel(new String[] {"Seleccionar...", "F", "M"}));
 			cbxSexo.setBounds(104, 151, 115, 22);
 			panel_1.add(cbxSexo);
 			
@@ -180,7 +179,6 @@ public class RegistrarTrabajador extends JDialog {
 					rbtnDisenador.setSelected(false);
 					rbtnJefeProyecto.setSelected(true);
 					rbtnPlanificador.setSelected(false);
-					pnlDisenador.setVisible(false);
 					pnlProgramador.setVisible(false);
 					pnlPlanificador.setVisible(false);
 				}
@@ -196,7 +194,6 @@ public class RegistrarTrabajador extends JDialog {
 					rbtnDisenador.setSelected(true);
 					rbtnJefeProyecto.setSelected(false);
 					rbtnPlanificador.setSelected(false);
-					pnlDisenador.setVisible(true);
 					pnlProgramador.setVisible(false);
 					pnlPlanificador.setVisible(false);
 				}
@@ -212,7 +209,6 @@ public class RegistrarTrabajador extends JDialog {
 					rbtnDisenador.setSelected(false);
 					rbtnJefeProyecto.setSelected(false);
 					rbtnPlanificador.setSelected(false);
-					pnlDisenador.setVisible(false);
 					pnlProgramador.setVisible(true);
 					pnlPlanificador.setVisible(false);
 				}
@@ -227,7 +223,6 @@ public class RegistrarTrabajador extends JDialog {
 					rbtnProgramador.setSelected(false);
 					rbtnDisenador.setSelected(false);
 					rbtnJefeProyecto.setSelected(false);
-					pnlDisenador.setVisible(false);
 					pnlProgramador.setVisible(false);
 					pnlPlanificador.setVisible(true);
 				}
@@ -250,21 +245,6 @@ public class RegistrarTrabajador extends JDialog {
 			spnFrecuencia.setModel(new SpinnerNumberModel(new Integer(1), new Integer(1), null, new Integer(1)));
 			spnFrecuencia.setBounds(183, 13, 60, 20);
 			pnlPlanificador.add(spnFrecuencia);
-			
-			pnlDisenador = new JPanel();
-			pnlDisenador.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-			pnlDisenador.setBounds(10, 336, 437, 47);
-			panel.add(pnlDisenador);
-			pnlDisenador.setLayout(null);
-			
-			JLabel lblAnios = new JLabel("A\u00F1os de Experiencia:");
-			lblAnios.setBounds(10, 16, 120, 14);
-			pnlDisenador.add(lblAnios);
-			
-			spnAnios = new JSpinner();
-			spnAnios.setModel(new SpinnerNumberModel(new Integer(1), new Integer(1), null, new Integer(1)));
-			spnAnios.setBounds(157, 13, 141, 20);
-			pnlDisenador.add(spnAnios);
 			
 			pnlProgramador = new JPanel();
 			pnlProgramador.setBounds(10, 336, 437, 47);
@@ -306,8 +286,7 @@ public class RegistrarTrabajador extends JDialog {
 							trabajador = new Planificador(id,identificacion,nombre,apellido,direccion,sexo,edad,salario,cantDias);
 						}
 						else if(rbtnDisenador.isSelected()){ 
-							int aniosExperiencia = new Integer(spnAnios.getValue().toString());
-							trabajador = new Disenador(id,identificacion,nombre,apellido,direccion,sexo,edad,salario,aniosExperiencia);
+							trabajador = new Trabajador(id,identificacion,nombre,apellido,direccion,sexo,edad,salario);
 						}
 						else if(rbtnProgramador.isSelected()){
 							String lenguaje = txtLenguaje.getText();
@@ -316,11 +295,22 @@ public class RegistrarTrabajador extends JDialog {
 								validado = true;
 							}
 						} else {
-							trabajador = new JefeProyecto(id,identificacion,nombre,apellido,direccion,sexo,edad,salario);
+							trabajador = new JefeProyecto(id,identificacion,nombre,apellido,direccion,sexo,edad,salario,0);
 						}
 						
 						if(validado || verificarCampos(id,identificacion,nombre,apellido,direccion,sexo,edad,salario)) {
 							Empresa.getInstance().registrarTrabajador(trabajador);
+							Database database = new Database();
+							if(trabajador instanceof Planificador) {
+								database.addPlanificador(trabajador.getIdentificacion(), trabajador.getNombre(), trabajador.getApellidos(), trabajador.getDireccion(), trabajador.getSexo(), trabajador.getEdad(), trabajador.getSalario(), ((Planificador) trabajador).getCantDias());
+							} else if (trabajador instanceof JefeProyecto) {
+								database.addJefeProyecto(trabajador.getIdentificacion(), trabajador.getNombre(), trabajador.getApellidos(), trabajador.getDireccion(), trabajador.getSexo(), trabajador.getEdad(), trabajador.getSalario());
+							} else if(trabajador instanceof Programador) {
+								database.addProgramador(trabajador.getIdentificacion(), trabajador.getNombre(), trabajador.getApellidos(), trabajador.getDireccion(), trabajador.getSexo(), trabajador.getEdad(), trabajador.getSalario(), ((Programador) trabajador).getLenguaje());
+							} else {
+								database.addWorker(trabajador.getIdentificacion(), trabajador.getNombre(), trabajador.getApellidos(), trabajador.getDireccion(), trabajador.getSexo(), trabajador.getEdad(), trabajador.getSalario());
+							}
+							
 							resetValues();
 							JOptionPane.showMessageDialog(null,"Registro Satisfactorio" ,"Información", JOptionPane.INFORMATION_MESSAGE);
 						}else {
@@ -356,7 +346,6 @@ public class RegistrarTrabajador extends JDialog {
 		rbtnProgramador.setSelected(false);
 		rbtnDisenador.setSelected(true);
 		rbtnJefeProyecto.setSelected(false);
-		pnlDisenador.setVisible(true);
 		pnlProgramador.setVisible(false);
 		pnlPlanificador.setVisible(false);
 		txtLenguaje.setText("");
@@ -370,7 +359,6 @@ public class RegistrarTrabajador extends JDialog {
 		
 		spnFrecuencia.setValue(new Integer(1));
 		spnEdad.setValue(new Integer(18));
-		spnAnios.setValue(new Integer(1));
 		spnSalario.setValue(new Float(150));
 		
 	}

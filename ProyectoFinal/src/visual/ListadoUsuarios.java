@@ -13,6 +13,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 import logico.Cliente;
+import logico.Database;
 import logico.Empresa;
 import logico.Usuario;
 
@@ -115,6 +116,9 @@ public class ListadoUsuarios extends JDialog {
 				btnEliminar.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						Empresa.getInstance().eliminarUsuario(usuario);
+						Database database = new Database();
+						database.deleteUser(new Integer(usuario.getId().substring(2)));
+						
 						loadUsuarios();
 					}
 				});
