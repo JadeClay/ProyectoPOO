@@ -50,5 +50,17 @@ public class Proyecto implements Serializable {
 	public void setEstado(boolean estado) {
 		this.estado = estado;
 	}
+	
+	public Trabajador getJefeProyectoAsignado() {
+		Trabajador result = null;
+		// BUSCANDO QUIEN ES EL JEFE DE PROYECTO
+		for(Trabajador t : losTrabajadores) {
+			if(t instanceof JefeProyecto) {
+				result = t;
+			}
+		}
+		
+		return result;
+	}
     
 }

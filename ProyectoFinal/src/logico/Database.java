@@ -2,9 +2,11 @@ package logico;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class Database {
@@ -106,7 +108,7 @@ public class Database {
 			ResultSet rs = statement.executeQuery("SELECT * FROM Cliente");
 			
 			while(rs.next()) {
-				Cliente cliente = new Cliente("CL-" + rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4));
+				Cliente cliente = new Cliente("C-" + rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4));
 				result.add(cliente);
 			}
 			
@@ -221,13 +223,7 @@ public class Database {
 			}
 			
 			// Adding Disenadores
-			rs = statement.executeQuery("SELECT Trabajador.* FROM Trabajador \r\n" + 
-					"LEFT JOIN Programador ON Trabajador.id = Programador.id_trabajador\r\n" + 
-					"LEFT JOIN Planificador ON Trabajador.id = Planificador.id_trabajador\r\n" + 
-					"LEFT JOIN JefeProyecto ON Trabajador.id = JefeProyecto.id_trabajador\r\n" + 
-					"WHERE (Programador.id_trabajador IS NULL) \r\n" + 
-					"AND (Planificador.id_trabajador IS NULL)\r\n" + 
-					"AND (JefeProyecto.id_trabajador IS NULL);");
+			rs = statement.executeQuery("SELECT * FROM view_disenadores");
 			while(rs.next()) {
 				Trabajador trabajador = new Trabajador("T-" + rs.getInt(1), 
 						rs.getString(2), rs.getString(3), 
@@ -253,7 +249,7 @@ public class Database {
 		try {
 			Connection conn = DriverManager.getConnection(connectionUrl);
 			Statement statement = conn.createStatement();
-			ResultSet rs = statement.executeQuery("SELECT valor FROM evaluacion WHERE id_trabajador = " + id);
+			ResultSet rs = statement.executeQuery("EXECUTE sp_buscarEvaluaciones " + id);
 			
 			while(rs.next()) {
 				result.add(rs.getInt(1));
@@ -266,16 +262,34 @@ public class Database {
 		return result;
 	}
 	
-	public boolean addJefeProyecto(String cedula, String nombre, String apellidos, String direccion, String sexo, int edad, float salario) {
+	public boolean addEvaluation(int id,int valor) {
+		boolean result = false;
+		
+		try {
+			Connection conn = DriverManager.getConnection(connectionUrl);
+			Statement statement = conn.createStatement();
+			int rowsModified = statement.executeUpdate("INSERT INTO Evaluacion(id_trabajador,valor) VALUES (" + id + "," + valor + ")");
+			if(rowsModified > 0) {
+				result = true;
+			}
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	public boolean addJefeProyecto(int id, String cedula, String nombre, String apellidos, String direccion, String sexo, int edad, float salario) {
 		boolean result = false;
 		
 		try {
 			Connection conn = DriverManager.getConnection(connectionUrl);
 			Statement statement = conn.createStatement();
 			if(addWorker(cedula, nombre, apellidos, direccion, sexo, edad, salario)) {
-				ResultSet rs = statement.executeQuery("SELECT id FROM Trabajador WHERE cedula = '" + cedula + "'");
+				int rowsModified = statement.executeUpdate("INSERT INTO JefeProyecto (id_trabajador,cantTrabajadores) VALUES ("+ id + "," + 0 +")");
 				
-				int rowsModified = statement.executeUpdate("INSERT INTO JefeProyecto (id_trabajador,cantTrabajadores) VALUES ("+ rs.getInt(1) + "," + 0 +")");
+				addEvaluation(id,100);
+				
 				if(rowsModified > 0) {
 					result = true;
 				}
@@ -287,16 +301,17 @@ public class Database {
 		return result;
 	}
 	
-	public boolean addPlanificador(String cedula, String nombre, String apellidos, String direccion, String sexo, int edad, float salario, int cantDias) {
+	public boolean addPlanificador(int id, String cedula, String nombre, String apellidos, String direccion, String sexo, int edad, float salario, int cantDias) {
 		boolean result = false;
 		
 		try {
 			Connection conn = DriverManager.getConnection(connectionUrl);
 			Statement statement = conn.createStatement();
-			if(addWorker(cedula, nombre, apellidos, direccion, sexo, edad, salario)) {
-				ResultSet rs = statement.executeQuery("SELECT id FROM Trabajador WHERE cedula = '" + cedula + "'");
+			if(addWorker(cedula, nombre, apellidos, direccion, sexo, edad, salario)) {				
+				int rowsModified = statement.executeUpdate("INSERT INTO Planificador (id_trabajador,frecuenciaDias) VALUES ("+ id + "," + cantDias +")");
 				
-				int rowsModified = statement.executeUpdate("INSERT INTO Planificador (id_trabajador,frecuenciaDias) VALUES ("+ rs.getInt(1) + "," + cantDias +")");
+				addEvaluation(id,100);
+				
 				if(rowsModified > 0) {
 					result = true;
 				}
@@ -308,19 +323,20 @@ public class Database {
 		return result;
 	}
 	
-	public boolean addProgramador(String cedula, String nombre, String apellidos, String direccion, String sexo, int edad, float salario, String lenguaje) {
+	public boolean addProgramador(int id, String cedula, String nombre, String apellidos, String direccion, String sexo, int edad, float salario, String lenguaje) {
 		boolean result = false;
 		
 		try {
 			Connection conn = DriverManager.getConnection(connectionUrl);
 			Statement statement = conn.createStatement();
 			if(addWorker(cedula, nombre, apellidos, direccion, sexo, edad, salario)) {
-				ResultSet rs = statement.executeQuery("SELECT id FROM Trabajador WHERE cedula = '" + cedula + "'");
-				
-				int rowsModified = statement.executeUpdate("INSERT INTO Programador (id_trabajador,lenguaje) VALUES ("+ rs.getInt(1) + ",'" + lenguaje +"')");
-				if(rowsModified > 0) {
-					result = true;
-				}
+				int rowsModified = statement.executeUpdate("INSERT INTO Programador (id_trabajador,lenguaje) VALUES ("+ id + ",'" + lenguaje +"')");
+					
+					addEvaluation(id,100);
+					
+					if(rowsModified > 0) {
+						result = true;
+					}
 			}
 		} catch(SQLException e) {
 			e.printStackTrace();
@@ -334,9 +350,13 @@ public class Database {
 		
 		try {
 			Connection conn = DriverManager.getConnection(connectionUrl);
-			Statement statement = conn.createStatement();
-			int rowsModified = statement.executeUpdate("INSERT INTO Trabajador (cedula,nombre,apellidos,direccion,sexo,edad,salario) "
-					+ "VALUES ('"+ cedula + "','" + nombre + "','" + apellido +"','"+ direccion + "','" + sexo + "'," + edad + "," + salario + ")");
+			String sql ="INSERT INTO Trabajador (cedula,nombre,apellidos,direccion,sexo,edad,salario) "
+					+ "VALUES ('"+ cedula + "','" + nombre + "','" + apellido +"','"+ direccion + "','" + sexo + "'," + edad + "," + salario + ")";
+			 
+			PreparedStatement ps = conn.prepareStatement(sql,
+			        Statement.RETURN_GENERATED_KEYS);
+			int rowsModified = ps.executeUpdate();
+			
 			if(rowsModified > 0) {
 				result = true;
 			}
@@ -410,6 +430,7 @@ public class Database {
 		try {
 			Connection conn = DriverManager.getConnection(connectionUrl);
 			Statement statement = conn.createStatement();
+			statement.executeUpdate("DELETE FROM Trabajador_Proyecto WHERE id_trabajador=" + id);
 			int rowsModified = statement.executeUpdate("DELETE FROM Trabajador WHERE id=" + id);
 		
 			if(rowsModified > 0) {
@@ -433,6 +454,104 @@ public class Database {
 			if(rowsModified > 0) {
 				result = true;
 			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	// Methods to administer projects
+	
+	// POS 0 - ArrayList con Contratos
+	// POS 1 - ArrayList con Proyectos
+	public ArrayList[] getAllProjects() {
+		ArrayList[] result = new ArrayList[2];
+		result[0] = new ArrayList<Contrato>();
+		result[1] = new ArrayList<Proyecto>();
+		
+		try {
+			Connection conn = DriverManager.getConnection(connectionUrl);
+			Statement statement = conn.createStatement();
+			ResultSet rs = statement.executeQuery("SELECT id,nombre,estado,id_cliente,horasHombre,fechaInicio,fechaFin,prorrogado FROM Proyecto");
+			
+			while(rs.next()) {
+				int id = rs.getInt(1);
+				Proyecto proyecto = new Proyecto("P-" + id,rs.getString(2),new ArrayList<Trabajador>());
+				proyecto.setEstado(rs.getBoolean(3));
+				proyecto.setLosTrabajadores(getWorkersOfProject(id));
+				result[1].add(proyecto);
+			
+				Cliente cliente = Empresa.getInstance().buscarClienteById("C-" + rs.getInt(4));
+				cliente.getLosProyectos().add(proyecto);
+				Contrato contrato = new Contrato("CL-" + id,cliente,proyecto, rs.getInt(5));
+					
+				contrato.setFechaInicio(rs.getDate(6));
+				contrato.setFechaEntrega(rs.getDate(7));
+				contrato.setProrrogado(rs.getBoolean(8));
+				result[0].add(contrato);
+
+			}
+		
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+		
+	}
+	
+	public ArrayList<Trabajador> getWorkersOfProject(int id) {
+		ArrayList<Trabajador> lostrabajadores = new ArrayList<Trabajador>();
+		
+		try {
+			Connection conn = DriverManager.getConnection(connectionUrl);
+			Statement statement = conn.createStatement();
+			ResultSet rs = statement.executeQuery("EXECUTE sp_buscarEmpleadosRelacionados " + id);
+			
+			while(rs.next()) {
+				lostrabajadores.add(Empresa.getInstance().buscarTrabajadorById("T-"+rs.getInt(1)));
+			}
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return lostrabajadores;
+	}
+	
+	public boolean addProject(Contrato contrato) {
+		boolean result = false;
+		
+		try {
+			int idGuardadoProyecto = 0;
+			SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+			
+			
+			Connection conn = DriverManager.getConnection(connectionUrl);
+			Statement statement = conn.createStatement();
+			int rowsModified = statement.executeUpdate("INSERT INTO Proyecto(nombre,horasHombre,fechaInicio,fechaFin,prorrogado,id_cliente,id_proyecto,id_jefeproyecto,estado) "
+					+ "VALUES ('" + contrato.getProyecto().getNombre() + "'," 
+					+ contrato.getHoras() + ",'" 
+					+ sdf1.format(contrato.getFechaInicio()) + "','" 
+					+ sdf1.format(contrato.getFechaEntrega()) + "',"
+					+ (contrato.isProrrogado() ? 1 : 0) + ","
+					+ new Integer(contrato.getCliente().getId().substring(2)) + ","
+					+ new Integer(contrato.getProyecto().getId().substring(2)) + ","
+					+ new Integer(contrato.getProyecto().getJefeProyectoAsignado().getId().substring(2)) + ","
+					+ 1 + ")");
+			
+			// BUSCANDO CON QUE ID SE GUARDÓ EN LA BASE DE DATOS
+			Statement statement2 = conn.createStatement();
+			ResultSet rs = statement2.executeQuery("SELECT id,nombre FROM Proyecto WHERE nombre = '" + contrato.getProyecto().getNombre() + "'");
+			
+			while(rs.next()) {
+				idGuardadoProyecto = rs.getInt(1);
+			}
+			
+			for(Trabajador t : contrato.getProyecto().getLosTrabajadores()) {
+				rowsModified += statement.executeUpdate("INSERT INTO Trabajador_Proyecto(id_trabajador,id_proyecto) VALUES ("+ new Integer(t.getId().substring(2)) + "," + idGuardadoProyecto + ")");
+			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

@@ -45,38 +45,7 @@ public class login extends JFrame {
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				FileInputStream empresa;
-				FileOutputStream empresa2;
-				ObjectInputStream empresaRead;
-				ObjectOutputStream empresaWrite;
-				try {
-					empresa = new FileInputStream ("empresa.dat");
-					empresaRead = new ObjectInputStream(empresa);
-					Empresa temp = (Empresa)empresaRead.readObject();
-					
-					// El método setEmpresa es el que carga el fichero, esto hay que cambiarlo y dejar simplemente el loadData, que será el que cargue toda la info existente de la base de datos.
-					Empresa.setEmpresa(temp);
-					Empresa.loadData();
-					
-					empresa.close();
-					empresaRead.close();
-				} catch (FileNotFoundException e) {
-					try {
-						empresa2 = new  FileOutputStream("empresa.dat");
-						empresaWrite = new ObjectOutputStream(empresa2);
-						Usuario aux = new Usuario(new String("U-1"), "Admin", "Admin", 1);
-						Empresa.getInstance().regUser(aux);
-						empresaWrite.writeObject(Empresa.getInstance());
-						empresa2.close();
-						empresaWrite.close();
-					} catch (FileNotFoundException e1) {
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-					}
-				} catch (IOException | ClassNotFoundException e) {
-					e.printStackTrace();
-					
-				} 
+				Empresa.getInstance().loadData();
 				
 				try {
 					login frame = new login();

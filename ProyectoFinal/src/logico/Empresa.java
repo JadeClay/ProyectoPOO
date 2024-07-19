@@ -57,12 +57,15 @@ public class Empresa implements Serializable {
 		empresa.setLosusuarios(database.getAllUsers());
 		empresa.setMisclientes(database.getAllClients());
 		empresa.setMistabajadores(database.getAllWorkers());
+		ArrayList[] data = database.getAllProjects();
+		empresa.setLoscontratos(data[0]);
+		empresa.setLosproyectos(data[1]);
 		
 		empresa.recuperarUltimoIdCliente();
-		empresa.recuperarUltimoIdContrato();
-		empresa.recuperarUltimoIdProyecto();
 		empresa.recuperarUltimoIdTrabajador();
 		empresa.recuperarUltimoIdUsuario();
+		empresa.recuperarUltimoIdContrato();
+		empresa.recuperarUltimoIdProyecto();
 	}
 	
 	public ArrayList<Usuario> getLosusuarios() {
@@ -185,7 +188,7 @@ public class Empresa implements Serializable {
 		if(misclientes.size() != 0) {
 			aux = misclientes.get(misclientes.size()-1);
 			
-			idClientes = new Integer(aux.getId().substring(3)) + 1;
+			idClientes = new Integer(aux.getId().substring(2)) + 1;
 		} else {
 			idClientes = 1;
 		}
@@ -193,10 +196,10 @@ public class Empresa implements Serializable {
 	
 	private void recuperarUltimoIdContrato() {
 		Contrato aux = null;
-		if(losproyectos.size() != 0) {
+		if(loscontratos.size() != 0) {
 			aux = loscontratos.get(loscontratos.size()-1);
 
-			idContratos = new Integer(aux.getId().substring(2)) + 1;
+			idContratos = new Integer(aux.getId().substring(3)) + 1;
 		} else {
 			idContratos = 1;
 		}

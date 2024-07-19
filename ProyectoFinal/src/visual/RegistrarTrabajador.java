@@ -302,11 +302,11 @@ public class RegistrarTrabajador extends JDialog {
 							Empresa.getInstance().registrarTrabajador(trabajador);
 							Database database = new Database();
 							if(trabajador instanceof Planificador) {
-								database.addPlanificador(trabajador.getIdentificacion(), trabajador.getNombre(), trabajador.getApellidos(), trabajador.getDireccion(), trabajador.getSexo(), trabajador.getEdad(), trabajador.getSalario(), ((Planificador) trabajador).getCantDias());
+								database.addPlanificador(new Integer(trabajador.getId().substring(2)), trabajador.getIdentificacion(), trabajador.getNombre(), trabajador.getApellidos(), trabajador.getDireccion(), trabajador.getSexo(), trabajador.getEdad(), trabajador.getSalario(), new Integer(spnFrecuencia.getValue().toString()));
 							} else if (trabajador instanceof JefeProyecto) {
-								database.addJefeProyecto(trabajador.getIdentificacion(), trabajador.getNombre(), trabajador.getApellidos(), trabajador.getDireccion(), trabajador.getSexo(), trabajador.getEdad(), trabajador.getSalario());
+								database.addJefeProyecto(new Integer(trabajador.getId().substring(2)), trabajador.getIdentificacion(), trabajador.getNombre(), trabajador.getApellidos(), trabajador.getDireccion(), trabajador.getSexo(), trabajador.getEdad(), trabajador.getSalario());
 							} else if(trabajador instanceof Programador) {
-								database.addProgramador(trabajador.getIdentificacion(), trabajador.getNombre(), trabajador.getApellidos(), trabajador.getDireccion(), trabajador.getSexo(), trabajador.getEdad(), trabajador.getSalario(), ((Programador) trabajador).getLenguaje());
+								database.addProgramador(new Integer(trabajador.getId().substring(2)), trabajador.getIdentificacion(), trabajador.getNombre(), trabajador.getApellidos(), trabajador.getDireccion(), trabajador.getSexo(), trabajador.getEdad(), trabajador.getSalario(), txtLenguaje.getText());
 							} else {
 								database.addWorker(trabajador.getIdentificacion(), trabajador.getNombre(), trabajador.getApellidos(), trabajador.getDireccion(), trabajador.getSexo(), trabajador.getEdad(), trabajador.getSalario());
 							}

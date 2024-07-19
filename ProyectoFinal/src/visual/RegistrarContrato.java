@@ -39,6 +39,7 @@ import com.sun.xml.internal.ws.api.Component;
 
 import logico.Cliente;
 import logico.Contrato;
+import logico.Database;
 import logico.Disenador;
 import logico.Empresa;
 import logico.JefeProyecto;
@@ -425,6 +426,10 @@ public class RegistrarContrato extends JDialog {
 	                    	if(client != null) {
 		                        Contrato contrato = new Contrato(new String("CL-" + Empresa.getInstance().idContratos), client, proyecto, new Integer(spnHoras.getValue().toString()));
 		                        Empresa.getInstance().registrarContrato(contrato);
+		                        Database database = new Database();
+		                        
+		                        database.addProject(contrato);
+		                        
 		                        client.getLosProyectos().add(proyecto);
 		                        clearContract();
 		                        JOptionPane.showMessageDialog(null,"Registro Satisfactorio" ,"Información", JOptionPane.INFORMATION_MESSAGE);
@@ -492,6 +497,10 @@ public class RegistrarContrato extends JDialog {
 		} else {
 			client = new Cliente(txtIdCliente.getText(), txtIdentificacion.getText(), txtNombre.getText(), txtDireccion.getText());
 			Empresa.getInstance().getMisclientes().add(client);
+			Database database = new Database();
+			
+			database.addClient(txtIdentificacion.getText(), txtNombre.getText(), txtDireccion.getText());
+			
 			Empresa.idClientes++;
 		}
 		
@@ -601,7 +610,7 @@ public class RegistrarContrato extends JDialog {
 	    }
 	    
 	    trabajadores.add((JefeProyecto) comboBoxJefe.getSelectedItem());
-	    trabajadores.add((Disenador) comboBoxDisenador.getSelectedItem());
+	    trabajadores.add((Trabajador) comboBoxDisenador.getSelectedItem());
 	    trabajadores.add((Planificador) comboBoxPlanificador.getSelectedItem());
 	    
 	    Date fecha = new Date();
