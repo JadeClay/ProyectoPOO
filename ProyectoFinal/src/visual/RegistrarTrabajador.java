@@ -99,7 +99,6 @@ public class RegistrarTrabajador extends JDialog {
 			txtId = new JTextField();
 			txtId.setEditable(false);
 			txtId.setBounds(33, 26, 57, 20);
-			//txtId.setText("Q-"+Complejo.getInstance().idQueso);
 			panel_1.add(txtId);
 			txtId.setColumns(10);
 			
@@ -308,7 +307,7 @@ public class RegistrarTrabajador extends JDialog {
 							} else if(trabajador instanceof Programador) {
 								database.addProgramador(new Integer(trabajador.getId().substring(2)), trabajador.getIdentificacion(), trabajador.getNombre(), trabajador.getApellidos(), trabajador.getDireccion(), trabajador.getSexo(), trabajador.getEdad(), trabajador.getSalario(), txtLenguaje.getText());
 							} else {
-								database.addWorker(trabajador.getIdentificacion(), trabajador.getNombre(), trabajador.getApellidos(), trabajador.getDireccion(), trabajador.getSexo(), trabajador.getEdad(), trabajador.getSalario());
+								database.addDisenador(new Integer(trabajador.getId().substring(2)), trabajador.getIdentificacion(), trabajador.getNombre(), trabajador.getApellidos(), trabajador.getDireccion(), trabajador.getSexo(), trabajador.getEdad(), trabajador.getSalario());
 							}
 							
 							resetValues();

@@ -125,6 +125,10 @@ public class Contrato implements Serializable {
 	        calendar.setTime(this.fechaEntrega);
 	        calendar.add(Calendar.HOUR_OF_DAY, horasProrrogadas);
 	        this.fechaEntrega = calendar.getTime();
+	        
+	        for(Trabajador t : proyecto.getLosTrabajadores()) {
+	        	t.actualizarHistorial(horasProrrogadas, true);
+	        }
 	    }
 	}
 

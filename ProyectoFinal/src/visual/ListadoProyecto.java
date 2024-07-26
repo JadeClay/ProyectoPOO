@@ -19,6 +19,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 import logico.Contrato;
+import logico.Database;
 import logico.Empresa;
 import logico.Proyecto;
 import logico.Trabajador;
@@ -117,28 +118,18 @@ public class ListadoProyecto extends JDialog {
                 	                "Finalizar/Prorrogar Proyecto", JOptionPane.DEFAULT_OPTION,
                 	                JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
                 	        if (choice == 0) { // Finalizar
-                	            Contrato contrato = Empresa.getInstance().buscarContratoPorIdProyecto(selected.getId());
-                	            if (contrato != null) {
-                	               if(!contrato.isProrrogado()) {
-	                	                for (Trabajador trabajador : selected.getLosTrabajadores()) {
-	                	                    trabajador.actualizarHistorial(0, false); 
-	                	                }
-                	               }
-                	            }
-                	            contrato.getProyecto().setEstado(false);
+                	        	Database database = new Database();
+                	        	Contrato contrato = Empresa.getInstance().buscarContratoPorIdProyecto(selected.getId());
+                	            database.updateProject(selected.getId(), true, 0, contrato);
                 	            loadProyectos();
                 	        } else if (choice == 1) { // Prorrogar
                 	            String hours = JOptionPane.showInputDialog(null, "Ingrese la cantidad de horas a prorrogar:");
                 	            if (hours != null && !hours.isEmpty()) {
                 	                int hoursToExtend = Integer.parseInt(hours);
                 	                Contrato contrato = Empresa.getInstance().buscarContratoPorIdProyecto(selected.getId());
-                	                if (contrato != null) {
-                	                    contrato.prorrogarProyecto(hoursToExtend); // Llamar al método prorrogarProyecto en el contrato asociado al proyecto seleccionado
-                	                    // Obtener los trabajadores asociados al proyecto y actualizar su historial de puntuación
-                	                    for (Trabajador trabajador : selected.getLosTrabajadores()) {
-                	                        trabajador.actualizarHistorial(hoursToExtend, true); 
-                	                    }
-                	                }
+                	                Database database = new Database();
+                	                database.updateProject(selected.getId(), false, hoursToExtend, contrato);
+                	                loadProyectos();
                 	            }
                 	        }
                 	    }
@@ -156,7 +147,11 @@ public class ListadoProyecto extends JDialog {
                                     "Seguro desea eliminar el proyecto con ID: " + selected.getId(), "Eliminar",
                                     JOptionPane.WARNING_MESSAGE);
                             if (option == JOptionPane.YES_OPTION) {
-                                Empresa.getInstance().eliminarProyecto(selected);
+                            	Database database = new Database();
+                	            database.deleteProject(selected.getId());
+                	            Contrato contrato = Empresa.getInstance().buscarContratoPorIdProyecto(selected.getId());
+                	            Empresa.getInstance().eliminarContrato(contrato);
+                	            Empresa.getInstance().eliminarProyecto(selected);
                                 loadProyectos();
                             }
                         }

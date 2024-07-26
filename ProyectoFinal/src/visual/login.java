@@ -43,19 +43,20 @@ public class login extends JFrame {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		Empresa.getInstance().loadData();
+		
 		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				Empresa.getInstance().loadData();
-				
-				try {
-					login frame = new login();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+            public void run() {
+                try {
+                    login frame = new login();
+                    frame.setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
 
 	/**
 	 * Create the frame.
@@ -97,25 +98,6 @@ public class login extends JFrame {
 
 				if(aux != null){
 					Principal frame = new Principal(aux);
-					frame.addWindowListener(new java.awt.event.WindowAdapter() {
-					    @Override
-					    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-							FileOutputStream empresa2;
-							ObjectOutputStream empresaWrite;
-							try {
-								empresa2 = new  FileOutputStream("empresa.dat");
-								empresaWrite = new ObjectOutputStream(empresa2);
-								empresaWrite.writeObject(Empresa.getInstance());
-							} catch (FileNotFoundException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							} catch (IOException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
-					    }
-					});
-					
 					dispose();
 					frame.setVisible(true);
 				};
@@ -152,4 +134,5 @@ public class login extends JFrame {
 		lblNewLabel_1.setBounds(295, 11, 245, 36);
 		panel.add(lblNewLabel_1);
 	}
+	
 }

@@ -66,6 +66,7 @@ public class Empresa implements Serializable {
 		empresa.recuperarUltimoIdUsuario();
 		empresa.recuperarUltimoIdContrato();
 		empresa.recuperarUltimoIdProyecto();
+		System.out.println("ID Cliente: " + idClientes + ", ID Empleados: " + idTrabajadores);
 	}
 	
 	public ArrayList<Usuario> getLosusuarios() {
@@ -162,58 +163,28 @@ public class Empresa implements Serializable {
 	}
 	
 	private void recuperarUltimoIdTrabajador() {
-		Trabajador aux = null;
-		if(mistrabajadores.size() != 0) {
-			aux = mistrabajadores.get(mistrabajadores.size()-1);
-			
-			idTrabajadores = new Integer(aux.getId().substring(2)) + 1;
-		} else {
-			idTrabajadores = 1;
-		}
+		Database db = new Database();
+		idTrabajadores = db.recoverLastIDWorker();
 	}
 	
 	private void recuperarUltimoIdUsuario() {
-		Usuario aux = null;
-		if(losusuarios.size() != 0) {
-			aux = losusuarios.get(losusuarios.size()-1);
-			
-			idUsuarios = new Integer(aux.getId().substring(2)) + 1;
-		} else {
-			idUsuarios = 1;
-		}
+		Database db = new Database();
+		idUsuarios = db.recoverLastIDUser();
 	}
 	
 	private void recuperarUltimoIdCliente() {
-		Cliente aux = null;
-		if(misclientes.size() != 0) {
-			aux = misclientes.get(misclientes.size()-1);
-			
-			idClientes = new Integer(aux.getId().substring(2)) + 1;
-		} else {
-			idClientes = 1;
-		}
+		Database db = new Database();
+		idClientes = db.recoverLastIDClient();
 	}
 	
 	private void recuperarUltimoIdContrato() {
-		Contrato aux = null;
-		if(loscontratos.size() != 0) {
-			aux = loscontratos.get(loscontratos.size()-1);
-
-			idContratos = new Integer(aux.getId().substring(3)) + 1;
-		} else {
-			idContratos = 1;
-		}
+		Database db = new Database();
+		idContratos = db.recoverLastIDProject();
 	}
 	
 	private void recuperarUltimoIdProyecto() {
-		Proyecto aux = null;
-		if(losproyectos.size() != 0) {
-			aux = losproyectos.get(losproyectos.size() - 1);
-			
-			idProyectos = new Integer(aux.getId().substring(2)) + 1;
-		} else {
-			idProyectos = 1;
-		}
+		Database db = new Database();
+		idProyectos = db.recoverLastIDProject();
 	}
 
 	public Trabajador buscarTrabajadorById(String id) {

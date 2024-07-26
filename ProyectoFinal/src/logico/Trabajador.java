@@ -84,9 +84,14 @@ public class Trabajador implements Serializable {
 		// Si se actualiza el historial por un atraso
 		if(atraso) {
 			historialPuntuacion.add(historialActual - puntosAModificar);
+			Database db = new Database();
+			db.addEvaluation(new Integer(id.substring(2)), (historialActual - puntosAModificar));
 			
 		} else if((historialActual + puntosAModificar) <= 100) { // Si se actualiza el historial por terminar el proyecto antes
 			historialPuntuacion.add(historialActual + puntosAModificar);
+			
+			Database db = new Database();
+			db.addEvaluation(new Integer(id.substring(2)), (historialActual + puntosAModificar));
 		}
 		
 	}

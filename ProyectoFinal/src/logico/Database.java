@@ -8,18 +8,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class Database {
-	private String connectionUrl;
+	private static String connectionUrl;
 	
 	public Database() {
-		this.connectionUrl = "jdbc:sqlserver://rafayoscar.database.windows.net:1433;"
-				+ "database=gestionsoftware;"
-				+ "user=system@rafayoscar;"
-				+ "password=:cgiNR7cvP.N9.m;"
-				+ "encrypt=true;"
-				+ "trustServerCertificate=false;"
-				+ "hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
+		this.connectionUrl = "jdbc:sqlserver://localhost:1433;encrypt=false;user=system;password=hola;database=gestionsoftware";
 	}
 	
 	// Methods to administer users
@@ -345,6 +341,20 @@ public class Database {
 		return result;
 	}
 	
+	public boolean addDisenador(int id, String cedula, String nombre, String apellidos, String direccion, String sexo, int edad, float salario) {
+		boolean result = false;
+		
+		if(addWorker(cedula, nombre, apellidos, direccion, sexo, edad, salario)) {
+					
+			if(addEvaluation(id, 100)) {
+				result = true;
+			}
+		
+		}
+		
+		return result;
+	}
+	
 	public boolean addWorker(String cedula, String nombre, String apellido, String direccion, String sexo, int edad, float salario) {
 		boolean result = false;
 		
@@ -529,18 +539,17 @@ public class Database {
 			
 			Connection conn = DriverManager.getConnection(connectionUrl);
 			Statement statement = conn.createStatement();
-			int rowsModified = statement.executeUpdate("INSERT INTO Proyecto(nombre,horasHombre,fechaInicio,fechaFin,prorrogado,id_cliente,id_proyecto,id_jefeproyecto,estado) "
+			int rowsModified = statement.executeUpdate("INSERT INTO Proyecto(nombre,horasHombre,fechaInicio,fechaFin,prorrogado,id_cliente,id_jefeproyecto,estado) "
 					+ "VALUES ('" + contrato.getProyecto().getNombre() + "'," 
 					+ contrato.getHoras() + ",'" 
 					+ sdf1.format(contrato.getFechaInicio()) + "','" 
 					+ sdf1.format(contrato.getFechaEntrega()) + "',"
 					+ (contrato.isProrrogado() ? 1 : 0) + ","
 					+ new Integer(contrato.getCliente().getId().substring(2)) + ","
-					+ new Integer(contrato.getProyecto().getId().substring(2)) + ","
 					+ new Integer(contrato.getProyecto().getJefeProyectoAsignado().getId().substring(2)) + ","
 					+ 1 + ")");
 			
-			// BUSCANDO CON QUE ID SE GUARDÓ EN LA BASE DE DATOS
+			// BUSCANDO CON QUE ID SE GUARDÃ“ EN LA BASE DE DATOS
 			Statement statement2 = conn.createStatement();
 			ResultSet rs = statement2.executeQuery("SELECT id,nombre FROM Proyecto WHERE nombre = '" + contrato.getProyecto().getNombre() + "'");
 			
@@ -559,5 +568,174 @@ public class Database {
 		return result;
 	}
 	
+	public static void deleteProject(String projectId) {
+        try {
+        	Connection conn = DriverManager.getConnection(connectionUrl);
+            Statement statement = conn.createStatement();
+
+            String deleteTrabajadorProyectoQuery = "DELETE FROM Trabajador_Proyecto WHERE id_proyecto = " + new Integer(projectId.substring(2));
+            statement.executeUpdate(deleteTrabajadorProyectoQuery);
+
+            String deleteProyectoQuery = "DELETE FROM Proyecto WHERE ID = " + new Integer(projectId.substring(2));
+            statement.executeUpdate(deleteProyectoQuery);
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+	
+	public void updateProject(String projectId, boolean finalize, int hoursToExtend, Contrato contrato) {
+        try (Connection conn = DriverManager.getConnection(connectionUrl);
+             Statement statement = conn.createStatement()) {
+
+            if (finalize) {
+                String finalizeProyectoQuery = "UPDATE Proyecto SET estado = 0 WHERE ID = '" + new Integer(projectId.substring(2)) + "'";
+                statement.executeUpdate(finalizeProyectoQuery);
+                contrato.getProyecto().setEstado(false);
+            } else {
+                String prorrogarProyectoQuery = "UPDATE Proyecto SET prorrogado = 1 WHERE ID = '" + new Integer(projectId.substring(2)) + "'";
+                statement.executeUpdate(prorrogarProyectoQuery);
+                
+                String updateHoursQuery = "UPDATE Proyecto SET horasHombre = horasHombre + " + hoursToExtend + " WHERE ID = '" + new Integer(projectId.substring(2)) + "'";
+                statement.executeUpdate(updateHoursQuery);
+                contrato.prorrogarProyecto(hoursToExtend);
+                
+                SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+                
+                Date fechaFin = new Date();
+                int diasNecesarios = (hoursToExtend)/6;
+        		int trabajadoresAsignados = contrato.getProyecto().getLosTrabajadores().size();
+        		int duracionEstimadaEnDias = Math.round(diasNecesarios/trabajadoresAsignados);
+        		
+        		Calendar calendario = Calendar.getInstance();
+        		calendario.add(Calendar.DAY_OF_MONTH, duracionEstimadaEnDias);
+        		
+        		fechaFin.setTime(calendario.getTimeInMillis());
+        		
+                String updateFinishDateQuery = "UPDATE Proyecto SET fechaFin = '" + sdf1.format(fechaFin)  + "' WHERE ID = '" + new Integer(projectId.substring(2)) + "'";
+                statement.executeUpdate(updateFinishDateQuery);
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+	
+	public int recoverLastIDUser() {
+		int result = 1;
+		
+		try {
+			Connection conn = DriverManager.getConnection(connectionUrl);
+			Statement statement = conn.createStatement();
+			ResultSet rs = statement.executeQuery("EXECUTE sp_getNextIDFromTable \"Usuario\"");
+			
+			if(rs.next()) {
+				result = rs.getInt(1);
+			}
+			
+			rs = statement.executeQuery("SELECT count(id) FROM \"Usuario\"");
+			
+			if(rs.next()) {
+				int cant = rs.getInt(1);
+				if(cant == 0 && result == 1) {
+					result += 1;
+				} else if(result > 1) {
+					result += 1;
+				}
+			}
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	public int recoverLastIDProject() {
+		int result = 1;
+		
+		try {
+			Connection conn = DriverManager.getConnection(connectionUrl);
+			Statement statement = conn.createStatement();
+			ResultSet rs = statement.executeQuery("EXECUTE sp_getNextIDFromTable \"Proyecto\"");
+			
+			if(rs.next()) {
+				result = rs.getInt(1);
+			}
+			
+			rs = statement.executeQuery("SELECT count(id) FROM \"Proyecto\"");
+			
+			if(rs.next()) {
+				int cant = rs.getInt(1);
+				if(cant == 0 && result == 1) {
+					result += 1;
+				} else if(result > 1) {
+					result += 1;
+				}
+			}
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	public int recoverLastIDClient() {
+		int result = 1;
+		
+		try {
+			Connection conn = DriverManager.getConnection(connectionUrl);
+			Statement statement = conn.createStatement();
+			ResultSet rs = statement.executeQuery("EXECUTE sp_getNextIDFromTable \"Cliente\"");
+			
+			if(rs.next()) {
+				result = rs.getInt(1);
+			}
+			
+			rs = statement.executeQuery("SELECT count(id) FROM \"Cliente\"");
+			
+			if(rs.next()) {
+				int cant = rs.getInt(1);
+				if(cant == 0 && result == 1) {
+					result += 1;
+				} else if(result > 1) {
+					result += 1;
+				}
+			}
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	public int recoverLastIDWorker() {
+		int result = 1;
+		
+		try {
+			Connection conn = DriverManager.getConnection(connectionUrl);
+			Statement statement = conn.createStatement();
+			ResultSet rs = statement.executeQuery("EXECUTE sp_getNextIDFromTable \"Trabajador\"");
+			
+			if(rs.next()) {
+				result = rs.getInt(1);
+			}
+			
+			rs = statement.executeQuery("SELECT count(id) FROM \"Trabajador\"");
+			
+			if(rs.next()) {
+				int cant = rs.getInt(1);
+				if(cant == 0 && result == 1) {
+					result += 1;
+				} else if(result > 1) {
+					result += 1;
+				}
+			}
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+		
+		return result;
+	}
 
 }
+
