@@ -215,15 +215,15 @@ public class Database {
 			Connection conn = DriverManager.getConnection(connectionUrl);
 			Statement statement = conn.createStatement();
 			ResultSet rs = statement.executeQuery("SELECT Trabajador.id, Trabajador.cedula, Trabajador.nombre, Trabajador.apellidos, \r\n" + 
-					"	   Trabajador.direccion, Trabajador.edad, Trabajador.salario, JefeProyecto.cantTrabajadores, Trabajador.sexo\r\n" + 
+					"	   Trabajador.direccion, Trabajador.edad, Trabajador.salario, Trabajador.sexo\r\n" + 
 					"FROM JefeProyecto JOIN Trabajador ON JefeProyecto.id_trabajador = Trabajador.id;");
 			
 			// Adding Jefe Proyectos
 			while(rs.next()) {
 				JefeProyecto trabajador = new JefeProyecto("T-" + rs.getInt(1), 
 						rs.getString(2), rs.getString(3), 
-						rs.getString(4), rs.getString(5), rs.getString(9),
-						rs.getInt(6), rs.getFloat(7), rs.getInt(8));
+						rs.getString(4), rs.getString(5), rs.getString(8),
+						rs.getInt(6), rs.getFloat(7), 0);
 				
 				trabajador.setHistorialPuntuacion(retrieveEvaluations(new Integer(trabajador.getId().substring(2))));
 				result.add(trabajador);
@@ -278,6 +278,25 @@ public class Database {
 		return result;
 	}
 	
+	public int getCantTrabajadoresJefeProyecto(int id) {
+		int result = 0;
+		
+		try {
+			Connection conn = DriverManager.getConnection(connectionUrl);
+			Statement statement = conn.createStatement();
+			ResultSet rs = statement.executeQuery("EXECUTE sp_conseguirCantTrabajadoresDeJefe " + id);
+			
+			if(rs.next()) {
+				result = rs.getInt(1);
+			}
+			
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
 	public Trabajador searchWorkerById(int id) {
 		Trabajador result = null;
 		
@@ -287,14 +306,14 @@ public class Database {
 			ResultSet rs = statement.executeQuery("SELECT id_trabajador FROM JefeProyecto WHERE id_trabajador = "+ id);
 			if(rs.next()) {
 				ResultSet rs1 = statement.executeQuery("SELECT Trabajador.id, Trabajador.cedula, Trabajador.nombre, Trabajador.apellidos, \r\n" + 
-					"	   Trabajador.direccion, Trabajador.edad, Trabajador.salario, JefeProyecto.cantTrabajadores, Trabajador.sexo\r\n" + 
+					"	   Trabajador.direccion, Trabajador.edad, Trabajador.salario, Trabajador.sexo\r\n" + 
 					"FROM JefeProyecto JOIN Trabajador ON JefeProyecto.id_trabajador = Trabajador.id WHERE JefeProyecto.id_trabajador = " + id);
 				
 				if(rs1.next()) {
 					JefeProyecto trabajador = new JefeProyecto("T-" + rs1.getInt(1), 
 							rs1.getString(2), rs1.getString(3), 
-							rs1.getString(4), rs1.getString(5), rs1.getString(9),
-							rs1.getInt(6), rs1.getFloat(7), rs1.getInt(8));
+							rs1.getString(4), rs1.getString(5), rs1.getString(8),
+							rs1.getInt(6), rs1.getFloat(7), 0);
 					trabajador.setHistorialPuntuacion(retrieveEvaluations(new Integer(trabajador.getId().substring(2))));
 					result = trabajador;
 				}
@@ -507,7 +526,7 @@ public class Database {
 			Connection conn = DriverManager.getConnection(connectionUrl);
 			Statement statement = conn.createStatement();
 			if(addWorker(cedula, nombre, apellidos, direccion, sexo, edad, salario)) {
-				int rowsModified = statement.executeUpdate("INSERT INTO JefeProyecto (id_trabajador,cantTrabajadores) VALUES ("+ id + "," + 0 +")");
+				int rowsModified = statement.executeUpdate("INSERT INTO JefeProyecto (id_trabajador) VALUES ("+ id +")");
 				
 				addEvaluation(id,100);
 				
@@ -813,7 +832,7 @@ public class Database {
 				JefeProyecto trabajador = new JefeProyecto("T-" + rs.getInt(1), 
 						rs.getString(2), rs.getString(3), 
 						rs.getString(4), rs.getString(5), rs.getString(6),
-						rs.getInt(7), rs.getFloat(8), rs.getInt(9));
+						rs.getInt(7), rs.getFloat(8), 0);
 				
 				lostrabajadores.add(trabajador);
 			}

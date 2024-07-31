@@ -22,6 +22,7 @@ import logico.JefeProyecto;
 import logico.Planificador;
 import logico.Programador;
 import logico.Trabajador;
+import logico.Database;
 import logico.Disenador;
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
@@ -205,7 +206,8 @@ public class PerfilTrabajador extends JDialog {
 			txtExtra.setText(new String("" + ((Planificador) trabajador).getCantDias()));
 		} else if(trabajador instanceof JefeProyecto) {
 			lblExtra.setText("Empleados a cargo:");
-			txtExtra.setText(new String("" + ((JefeProyecto) trabajador).getCantTrabajadores()));
+			Database db = new Database();
+			txtExtra.setText(new String("" + db.getCantTrabajadoresJefeProyecto(new Integer(trabajador.getId().substring(2)))));
 		} else {
 			lblExtra.setVisible(false);
 			txtExtra.setVisible(false);
