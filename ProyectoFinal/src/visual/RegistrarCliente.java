@@ -133,9 +133,8 @@ public class RegistrarCliente extends JDialog {
 						if (aux == null) {
 							crearCliente();
 						} else {
-							aux.setDireccion(txtDireccion.getText());
-							aux.setIdentificacion(txtIdentificacion.getText());
-							aux.setNombre(txtNombre.getText());
+							Database db = new Database();
+							db.updateClient(new Integer(aux.getId().substring(2)), txtIdentificacion.getText(), txtNombre.getText(), txtDireccion.getText());
 							JOptionPane.showMessageDialog(null,"Modificacion Exitosa" ,"Información", JOptionPane.INFORMATION_MESSAGE);
 							dispose();
 							ListadoClientes.loadClients();
@@ -178,7 +177,6 @@ public class RegistrarCliente extends JDialog {
 	private void crearCliente() {
 		if(!txtIdentificacion.getText().isEmpty() && !txtNombre.getText().isEmpty() && !txtDireccion.getText().isEmpty()) {
 			Cliente client = new Cliente(txtId.getText(),txtIdentificacion.getText(), txtNombre.getText(), txtDireccion.getText());
-			Empresa.getInstance().getMisclientes().add(client);
 			Empresa.idClientes++;
 			
 			Database database = new Database();

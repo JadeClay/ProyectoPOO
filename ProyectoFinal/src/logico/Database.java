@@ -175,7 +175,7 @@ public class Database {
 		try {
 			Connection conn = DriverManager.getConnection(connectionUrl);
 			Statement statement = conn.createStatement();
-			int rowsModified = statement.executeUpdate("UPDATE INTO Cliente SET cedula = '"+ cedula + "', nombre = '" + nombre + "', direccion = '" + direccion +"' WHERE id = " + id);
+			int rowsModified = statement.executeUpdate("UPDATE Cliente SET cedula = '"+ cedula + "', nombre = '" + nombre + "', direccion = '" + direccion +"' WHERE id = " + id);
 			
 			if(rowsModified > 0) {
 				result = true;
