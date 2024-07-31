@@ -120,7 +120,6 @@ public class CrearUsuario extends JDialog {
 							tipo = 1;
 						}
 						Usuario nuevoUsuario = new Usuario(new String("U-" + Empresa.getInstance().idUsuarios), txtUsuario.getText(), new String(txtPassword.getPassword()), tipo);
-						Empresa.getInstance().regUser(nuevoUsuario);
 						Database database = new Database();
 						database.registerUser(nuevoUsuario.getUsuario(), nuevoUsuario.getPassword(), nuevoUsuario.getTipo());
 						

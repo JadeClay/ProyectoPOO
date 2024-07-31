@@ -22,6 +22,7 @@ import javax.swing.JTable;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import javax.swing.border.EtchedBorder;
 import javax.swing.UIManager;
@@ -93,8 +94,8 @@ public class ListadoUsuarios extends JDialog {
 								btnEliminar.setEnabled(true);
 
 								if (usuario == null) {
-									
-									usuario = Empresa.getInstance().buscarUsuarioById((table.getValueAt(index, 0).toString()));
+									Database db = new Database();
+									usuario = db.searchUserById(new Integer(table.getValueAt(index, 0).toString().substring(2)));
 									
 								}
 								
@@ -115,7 +116,6 @@ public class ListadoUsuarios extends JDialog {
 				btnEliminar = new JButton("Eliminar");
 				btnEliminar.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						Empresa.getInstance().eliminarUsuario(usuario);
 						Database database = new Database();
 						database.deleteUser(new Integer(usuario.getId().substring(2)));
 						
@@ -141,10 +141,12 @@ public class ListadoUsuarios extends JDialog {
 	}
 
 	public static void loadUsuarios() { 
+		Database db = new Database();
 		model.setRowCount(0);
 		rows = new Object[model.getColumnCount()];
+		ArrayList<Usuario> usuarios = db.getAllUsers();
 		
-		for (Usuario c : Empresa.getInstance().getLosusuarios()) {
+		for (Usuario c : usuarios) {
 			rows[0] = c.getId();
 			rows[1] = c.getUsuario();
 			rows[2] = getTipoUsuario(c.getTipo());

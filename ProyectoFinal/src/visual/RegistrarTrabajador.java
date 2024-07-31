@@ -298,7 +298,6 @@ public class RegistrarTrabajador extends JDialog {
 						}
 						
 						if(validado || verificarCampos(id,identificacion,nombre,apellido,direccion,sexo,edad,salario)) {
-							Empresa.getInstance().registrarTrabajador(trabajador);
 							Database database = new Database();
 							if(trabajador instanceof Planificador) {
 								database.addPlanificador(new Integer(trabajador.getId().substring(2)), trabajador.getIdentificacion(), trabajador.getNombre(), trabajador.getApellidos(), trabajador.getDireccion(), trabajador.getSexo(), trabajador.getEdad(), trabajador.getSalario(), new Integer(spnFrecuencia.getValue().toString()));
@@ -354,7 +353,8 @@ public class RegistrarTrabajador extends JDialog {
 		
 		txtIdentificacion.setText("");
 		
-		txtId.setText("T-"+Empresa.getInstance().idTrabajadores);
+		Database db = new Database();
+		txtId.setText("T-" + db.recoverLastIDWorker());
 		
 		spnFrecuencia.setValue(new Integer(1));
 		spnEdad.setValue(new Integer(18));

@@ -43,7 +43,6 @@ public class login extends JFrame {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		Empresa.getInstance().loadData();
 		
 		EventQueue.invokeLater(new Runnable() {
             public void run() {

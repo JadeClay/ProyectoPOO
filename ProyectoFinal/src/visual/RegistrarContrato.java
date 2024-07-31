@@ -127,7 +127,7 @@ public class RegistrarContrato extends JDialog {
                 txtIdCliente = new JTextField();
                 txtIdCliente.setEditable(false);
 
-                txtIdCliente.setText("CL-");
+                txtIdCliente.setText("C-");
                 txtIdCliente.setColumns(10);
                 txtIdCliente.setBounds(47, 19, 109, 20);
                 panel_CLient.add(txtIdCliente);
@@ -192,9 +192,10 @@ public class RegistrarContrato extends JDialog {
                 label_1.setBounds(10, 54, 71, 14);
                 panel_Pr.add(label_1);
                 
+                Database db = new Database();
                 txtIdProyecto = new JTextField();
                 txtIdProyecto.setEditable(false);
-                txtIdProyecto.setText("P-"+Empresa.idProyectos);
+                txtIdProyecto.setText("P-"+db.recoverLastIDProject());
                 txtIdProyecto.setColumns(10);
                 txtIdProyecto.setBounds(49, 21, 109, 20);
                 panel_Pr.add(txtIdProyecto);
@@ -500,8 +501,6 @@ public class RegistrarContrato extends JDialog {
 			Database database = new Database();
 			
 			database.addClient(txtIdentificacion.getText(), txtNombre.getText(), txtDireccion.getText());
-			
-			Empresa.idClientes++;
 		}
 		
 	}
@@ -565,7 +564,8 @@ public class RegistrarContrato extends JDialog {
     private void buscarCliente(String id) {
         Cliente aux = null;
         if (!id.isEmpty()) {
-            aux = Empresa.getInstance().buscarClienteByIdentificador(id);
+        	Database db = new Database();
+            aux = db.searchClientByIdentification(id);
             
             if (aux != null) {
                 int proyectosActivos = Empresa.getInstance().contarProyectosActivosCliente(aux);
@@ -579,7 +579,7 @@ public class RegistrarContrato extends JDialog {
                 txtIdCliente.setText(aux.getId());
                 client = aux;
             } else {
-                txtIdCliente.setText(new String("C-" + Empresa.getInstance().idClientes));
+                txtIdCliente.setText(new String("C-" + db.recoverLastIDClient()));
                 txtNombre.setText("");
                 txtDireccion.setText("");
             }
@@ -591,10 +591,11 @@ public class RegistrarContrato extends JDialog {
 
     
     private void clearContract() {
+    	Database db = new Database();
         txtDireccion.setText("");
         txtIdCliente.setText("C-");
         txtNombre.setText("");
-        txtIdProyecto.setText("P-"+Empresa.getInstance().idProyectos);
+        txtIdProyecto.setText("P-"+db.recoverLastIDProject());
         txtNomPro.setText("");
         txtIdentificacion.setText("");
         spnHoras.setValue(new Integer(1));

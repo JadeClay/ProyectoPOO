@@ -90,9 +90,9 @@ public class RegistrarCliente extends JDialog {
 			JLabel lblDireccion = new JLabel("Direccion:");
 			lblDireccion.setBounds(10, 115, 71, 14);
 			panel_1.add(lblDireccion);
-			
+			Database db = new Database();
 			txtId = new JTextField();
-			txtId.setText("C-"+Empresa.idClientes);
+			txtId.setText("C-"+db.recoverLastIDClient());
 			txtId.setEditable(false);
 			txtId.setBounds(73, 24, 109, 20);
 			panel_1.add(txtId);

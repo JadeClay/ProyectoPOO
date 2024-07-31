@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Image;
 
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -31,7 +32,7 @@ public class PerfilCliente extends JDialog {
 	private JTextField txtNom;
 	private JTextField txtDirecc;
 	private JTextField txtIdentif;
-	private JList listProyectos;
+	private JList listProyectos = new JList();
 
 	/**
 	 * Launch the application.
@@ -53,8 +54,9 @@ public class PerfilCliente extends JDialog {
 		setTitle("Perfil De "+client.getNombre());
 		setResizable(false);
 		setModal(true);
-		setLocationRelativeTo(null);
+		
 		setBounds(100, 100, 440, 402);
+		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -120,7 +122,6 @@ public class PerfilCliente extends JDialog {
 			JScrollPane scrollPane = new JScrollPane();
 			panel_2.add(scrollPane, BorderLayout.CENTER);
 			
-			listProyectos = new JList();
 			scrollPane.setViewportView(listProyectos);
 		}
 		{
@@ -145,14 +146,15 @@ public class PerfilCliente extends JDialog {
 		this.setIconImage(img);
 	}
 	private void loadEverything(Cliente client) {
-		ArrayList<String> dataProyectos = new ArrayList<>();
+		DefaultListModel<String> dataProyectos = new DefaultListModel<String>();
 		
 		for (Proyecto p : client.getLosProyectos()) {
-			String nombre = new String(p.getId()+" : "+p.getNombre());
-			dataProyectos.add(nombre);
+			System.out.println(p.getNombre());
+			String nombre = new String(p.getId()+" - "+p.getNombre());
+			dataProyectos.addElement(nombre);
 		}
 		
-		listProyectos.setListData(dataProyectos.toArray());
+		listProyectos.setModel(dataProyectos);
 		
 		txtId.setText(client.getId());
 		txtNom.setText(client.getNombre());

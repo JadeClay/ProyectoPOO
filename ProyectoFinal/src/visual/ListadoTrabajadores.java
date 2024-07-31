@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -91,9 +92,11 @@ public class ListadoTrabajadores extends JDialog {
 						public void mouseClicked(MouseEvent e) {
 							int index = table.getSelectedRow();
 							if(index > -1){
+								Database db = new Database();
 								btnDelete.setEnabled(true);
 								btnVer.setEnabled(true);
-								selected = Empresa.getInstance().buscarTrabajadorById(table.getValueAt(index, 0).toString());
+								selected = db.searchWorkerById(new Integer(table.getValueAt(index, 0).toString().substring(2)));
+
 							}
 						}
 					});
@@ -126,8 +129,6 @@ public class ListadoTrabajadores extends JDialog {
 								} else {
 									database.deleteWorker(new Integer(selected.getId().substring(2)));
 								}
-								
-								Empresa.getInstance().eliminarTrabajador(selected);
 								
 								loadClientes();
 							}
@@ -168,18 +169,22 @@ public class ListadoTrabajadores extends JDialog {
 	}
 
 	public static void loadClientes() {
+		Database db = new Database();
+		
 		model.setRowCount(0);
 		rows = new Object[model.getColumnCount()];
-		int cant = Empresa.getInstance().getMistabajadores().size();
-		for (int i = 0; i < cant; i++) {
-			rows[0] = Empresa.getInstance().getMistabajadores().get(i).getId();
-			rows[1] = Empresa.getInstance().getMistabajadores().get(i).getIdentificacion();
-			rows[2] = Empresa.getInstance().getMistabajadores().get(i).getNombre();
-			rows[3] = Empresa.getInstance().getMistabajadores().get(i).getApellidos();
-			rows[4] = Empresa.getInstance().getMistabajadores().get(i).getDireccion();
-			rows[5] = Empresa.getInstance().getMistabajadores().get(i).getEdad();
-			rows[6] = new String("RD$ " + Empresa.getInstance().getMistabajadores().get(i).getSalario());
-			rows[7] = Empresa.getInstance().getMistabajadores().get(i).getEvaluacionActual();
+		
+		ArrayList<Trabajador> trabajadores = db.getAllWorkers();
+		
+		for (Trabajador t : trabajadores) {
+			rows[0] = t.getId();
+			rows[1] = t.getIdentificacion();
+			rows[2] = t.getNombre();
+			rows[3] = t.getApellidos();
+			rows[4] = t.getDireccion();
+			rows[5] = t.getEdad();
+			rows[6] = new String("RD$ " + t.getSalario());
+			rows[7] = t.getEvaluacionActual();
 			model.addRow(rows);
 		}
 		

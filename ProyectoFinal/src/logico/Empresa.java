@@ -42,17 +42,8 @@ public class Empresa implements Serializable {
 		return empresa;
 	}
 	
-	// LEGACY: HAY QUE CAMBIAR ESTO CUANDO SE TERMINE DE HACER LA TRANSCISIÓN A LA BASE DE DATOS
-	public static void setEmpresa(Empresa temp) {
-		empresa = temp;
-		//empresa.recuperarUltimoIdCliente();
-		//empresa.recuperarUltimoIdContrato();
-		empresa.recuperarUltimoIdProyecto();
-		empresa.recuperarUltimoIdTrabajador();
-		empresa.recuperarUltimoIdUsuario();
-	}
-	
-	public static void loadData() {
+
+	/*public static void loadIds() {
 		Database database = new Database();
 		empresa.setLosusuarios(database.getAllUsers());
 		empresa.setMisclientes(database.getAllClients());
@@ -67,7 +58,7 @@ public class Empresa implements Serializable {
 		empresa.recuperarUltimoIdContrato();
 		empresa.recuperarUltimoIdProyecto();
 		System.out.println("ID Cliente: " + idClientes + ", ID Empleados: " + idTrabajadores);
-	}
+	} */
 	
 	public ArrayList<Usuario> getLosusuarios() {
 		return losusuarios;
@@ -244,50 +235,26 @@ public class Empresa implements Serializable {
 	}
 	
 	public ArrayList<JefeProyecto> getJefeProyectosDisponibles() {
-		ArrayList<JefeProyecto> aux = new ArrayList<JefeProyecto>();
-		
-		for(Trabajador t : mistrabajadores) {
-			if(t instanceof JefeProyecto && t.getCantDeProyectosAsignados() < 2) {
-				aux.add((JefeProyecto) t);
-			}
-		}
-		
+		Database db = new Database();
+		ArrayList<JefeProyecto> aux = db.getJefeProyectosDisponibles(); 
 		return aux;
 	}
 
 	public ArrayList<Trabajador> getDisenadoresDisponibles() {
-		ArrayList<Trabajador> aux = new ArrayList<Trabajador>();
-		
-		for(Trabajador t : mistrabajadores) {
-			if(!(t instanceof JefeProyecto) && !(t instanceof Planificador) && !(t instanceof Programador) && t.getCantDeProyectosAsignados() < 2) {
-				aux.add(t);
-			}
-		}
-		
+		Database db = new Database();
+		ArrayList<Trabajador> aux = db.getDisenadoresDisponibles();
 		return aux;
 	}
 
 	public ArrayList<Planificador> getPlanificadoresDisponibles() {
-		ArrayList<Planificador> aux = new ArrayList<Planificador>();
-		
-		for(Trabajador t : mistrabajadores) {
-			if(t instanceof Planificador) {
-				aux.add((Planificador) t);
-			}
-		}
-		
+		Database db = new Database();
+		ArrayList<Planificador> aux = db.getPlanificadoresDisponibles();
 		return aux;
 	}
 	
 	public ArrayList<Programador> getProgramadoresDisponibles() {
-		ArrayList<Programador> aux = new ArrayList<Programador>();
-		
-		for(Trabajador t : mistrabajadores) {
-			if(t instanceof Programador && t.getCantDeProyectosAsignados() < 1) {
-				aux.add((Programador) t);
-			}
-		}
-		
+		Database db = new Database();
+		ArrayList<Programador> aux = db.getProgramadoresDisponibles();
 		return aux;
 	}
 	

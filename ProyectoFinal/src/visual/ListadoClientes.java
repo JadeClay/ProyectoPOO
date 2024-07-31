@@ -15,12 +15,14 @@ import javax.swing.table.DefaultTableModel;
 import logico.Cliente;
 import logico.Database;
 import logico.Empresa;
+import logico.Proyecto;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import javax.swing.border.EtchedBorder;
 import javax.swing.UIManager;
@@ -94,8 +96,9 @@ public class ListadoClientes extends JDialog {
 								btnEliminar.setEnabled(true);
 								btnModificar.setEnabled(true);
 								btnPerfil.setEnabled(true);
-							
-								client = Empresa.getInstance().buscarClienteById((table.getValueAt(index, 0).toString()));
+								Database db = new Database();
+								
+								client = db.searchClient(new Integer(table.getValueAt(index, 0).toString().substring(2)));
 
 								
 							}
@@ -117,7 +120,6 @@ public class ListadoClientes extends JDialog {
 				btnEliminar.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						if(client != null) {
-							Empresa.getInstance().eliminarCliente(client);
 							Database database = new Database();
 							
 							database.deleteClient(new Integer(client.getId().substring(2)));
@@ -171,10 +173,13 @@ public class ListadoClientes extends JDialog {
 	}
 
 	public static void loadClients() { 
+		Database db = new Database();
 		model.setRowCount(0);
 		rows = new Object[model.getColumnCount()];
+		ArrayList<Cliente> clientes = db.getAllClients();
+	
 		
-		for (Cliente c : Empresa.getInstance().getMisclientes()) {
+		for (Cliente c : clientes) {
 			rows[0] = c.getId();
 			rows[1] = c.getNombre();
 			rows[2] = c.getIdentificacion();

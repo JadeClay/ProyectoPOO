@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -33,7 +34,8 @@ public class ListadoProyecto extends JDialog {
     private JButton btnFinalizarProrrogar;
     private static DefaultTableModel model;
     private static Object[] rows;
-    private Proyecto selected = null;
+    private Contrato selected = null;
+    private JButton btnVer;
 
     /**
      * Launch the application.
@@ -88,11 +90,13 @@ public class ListadoProyecto extends JDialog {
                         if (!event.getValueIsAdjusting()) {
                             int selectedRow = table.getSelectedRow();
                             if (selectedRow != -1) {
+                            	Database db = new Database();
                                 String projectId = (String) model.getValueAt(selectedRow, 0);
-                                selected = Empresa.getInstance().buscarProyectoById(projectId);
+                                selected = db.searchContractById(new Integer(projectId.substring(2)));
                                 if (selected != null) {
                                     btnDelete.setEnabled(true);
                                     btnFinalizarProrrogar.setEnabled(true);
+                                    btnVer.setEnabled(true);
                                 } else {
                                     btnDelete.setEnabled(false);
                                     btnFinalizarProrrogar.setEnabled(false);
@@ -118,17 +122,17 @@ public class ListadoProyecto extends JDialog {
                 	                "Finalizar/Prorrogar Proyecto", JOptionPane.DEFAULT_OPTION,
                 	                JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
                 	        if (choice == 0) { // Finalizar
-                	        	Database database = new Database();
-                	        	Contrato contrato = Empresa.getInstance().buscarContratoPorIdProyecto(selected.getId());
-                	            database.updateProject(selected.getId(), true, 0, contrato);
+                	        	Database db = new Database();
+                	            db.finalizeProjecct(selected);
                 	            loadProyectos();
                 	        } else if (choice == 1) { // Prorrogar
                 	            String hours = JOptionPane.showInputDialog(null, "Ingrese la cantidad de horas a prorrogar:");
                 	            if (hours != null && !hours.isEmpty()) {
                 	                int hoursToExtend = Integer.parseInt(hours);
-                	                Contrato contrato = Empresa.getInstance().buscarContratoPorIdProyecto(selected.getId());
-                	                Database database = new Database();
-                	                database.updateProject(selected.getId(), false, hoursToExtend, contrato);
+                	                Database db = new Database();
+                	                System.out.println(selected.getId());
+                	                Contrato contrato = db.searchContractById(new Integer(selected.getId().substring(2)));
+                	                db.prorrogarProyecto(selected, hoursToExtend);
                 	                loadProyectos();
                 	            }
                 	        }
@@ -149,14 +153,22 @@ public class ListadoProyecto extends JDialog {
                             if (option == JOptionPane.YES_OPTION) {
                             	Database database = new Database();
                 	            database.deleteProject(selected.getId());
-                	            Contrato contrato = Empresa.getInstance().buscarContratoPorIdProyecto(selected.getId());
-                	            Empresa.getInstance().eliminarContrato(contrato);
-                	            Empresa.getInstance().eliminarProyecto(selected);
                                 loadProyectos();
                             }
                         }
                     }
                 });
+                {
+                	btnVer = new JButton("Ver Detalles");
+                	btnVer.addActionListener(new ActionListener() {
+                		public void actionPerformed(ActionEvent e) {
+                			PerfilContrato perfilcontrato = new PerfilContrato(selected);
+                			perfilcontrato.setVisible(true);
+                		}
+                	});
+                	btnVer.setEnabled(false);
+                	buttonPane.add(btnVer);
+                }
                 btnDelete.setEnabled(false);
                 buttonPane.add(btnDelete);
             }
@@ -178,15 +190,19 @@ public class ListadoProyecto extends JDialog {
     }
 
     public static void loadProyectos() {
+    	Database db = new Database();
+    	
         model.setRowCount(0);
         rows = new Object[model.getColumnCount()];
-        int cant = Empresa.getInstance().getLosproyectos().size();
-        for (int i = 0; i < cant; i++) {
-            Proyecto proyecto = Empresa.getInstance().getLosproyectos().get(i);
-            rows[0] = proyecto.getId();
-            rows[1] = proyecto.getNombre();
-            rows[2] = proyecto.getLosTrabajadores().size();
-            rows[3] = proyecto.getEstado() ? "Activo" : "Inactivo"; 
+        
+		ArrayList[] datos = db.getAllProjects();
+		ArrayList<Proyecto> proyectos = datos[1];
+		
+        for (Proyecto p : proyectos) {
+            rows[0] = p.getId();
+            rows[1] = p.getNombre();
+            rows[2] = p.getLosTrabajadores().size();
+            rows[3] = p.getEstado() ? "Activo" : "Inactivo"; 
             model.addRow(rows);
         }
 
